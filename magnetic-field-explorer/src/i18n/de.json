@@ -1,0 +1,49 @@
+{
+  "appTitle": "Magnetfeld-Explorer",
+  "appSubtitle": "Lerne, wie elektrische Spulen Magnetfelder formen",
+  "lessons": {
+    "singleLoop": "Einzelne Leiterschleife",
+    "helmholtz": "Helmholtz-Spulen",
+    "toroidal": "Toroidales Feld",
+    "helicalSheet": "Helikale Fläche",
+    "particle": "Teilcheninjektion"
+  },
+  "controls": {
+    "radius": "Radius",
+    "separation": "Abstand",
+    "current": "Stromstärke",
+    "numCoils": "Anzahl Spulen",
+    "minorRadius": "Kleiner Radius",
+    "nfp": "Feldperioden",
+    "numFieldLines": "Feldlinien",
+    "traceLength": "Spurlänge",
+    "numSeeds": "Startpunkte",
+    "numTurns": "Umdrehungen",
+    "charge": "Ladung (q)",
+    "mass": "Masse (m)",
+    "speed": "Geschwindigkeit |v₀|",
+    "angleTheta": "Injektionswinkel θ",
+    "anglePhi": "Injektionswinkel φ",
+    "rMin": "r min",
+    "rMax": "r max",
+    "compute": "Berechnen",
+    "reset": "Zurücksetzen"
+  },
+  "descriptions": {
+    "singleLoop": "Eine einzelne kreisförmige Leiterschleife erzeugt ein dipolartiges Magnetfeld. Die Feldlinien bilden geschlossene Schleifen durch die Spule. Auf der Achse fällt das Feld wie 1/(a²+z²)^(3/2) ab.",
+    "helmholtz": "Zwei koaxiale Spulen im Abstand ihres Radius erzeugen ein bemerkenswert homogenes Feld dazwischen – die Helmholtz-Konfiguration. Häufig in Laboren eingesetzt, um das Erdmagnetfeld zu kompensieren.",
+    "toroidal": "N symmetrisch um einen Torus angeordnete Spulen erzeugen ein toroidales Magnetfeld. Geladene Teilchen können in dieser Geometrie eingeschlossen werden – die Grundlage von Tokamak- und Stellarator-Fusionsreaktoren.",
+    "helicalSheet": "Eine radiale Linie von Startpunkten wird entlang der Feldlinien advektiert. Der Rotationstransform iota(r) ∝ r bewirkt, dass äußere Linien schneller winden und die Gerade in eine helikale Fläche verformt wird.",
+    "particle": "Ein in das Magnetfeld injiziertes Ion folgt einer spiralförmigen Bahn – der Larmor-Orbit. Der Zyklotonradius r_L = mv⊥/(|q|B) lässt sich durch Ladung, Masse oder Injektionsgeschwindigkeit einstellen."
+  },
+  "charts": {
+    "bzOnAxis": "Bz auf der Achse",
+    "axialPosition": "z / a",
+    "fieldStrength": "Bz (willk. Einh.)"
+  },
+  "info": {
+    "tfBackend": "Rechenbackend",
+    "computing": "Berechne…",
+    "done": "Fertig"
+  }
+}

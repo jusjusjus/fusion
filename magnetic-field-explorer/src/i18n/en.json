@@ -1,0 +1,49 @@
+{
+  "appTitle": "Magnetic Field Explorer",
+  "appSubtitle": "Learn how electric coils shape magnetic fields",
+  "lessons": {
+    "singleLoop": "Single Loop",
+    "helmholtz": "Helmholtz Coils",
+    "toroidal": "Toroidal Field",
+    "helicalSheet": "Helical Sheet",
+    "particle": "Particle Injection"
+  },
+  "controls": {
+    "radius": "Radius",
+    "separation": "Separation",
+    "current": "Current",
+    "numCoils": "No. of Coils",
+    "minorRadius": "Minor Radius",
+    "nfp": "Field Periods",
+    "numFieldLines": "Field Lines",
+    "traceLength": "Trace Length",
+    "numSeeds": "Seed Points",
+    "numTurns": "Turns",
+    "charge": "Charge (q)",
+    "mass": "Mass (m)",
+    "speed": "Speed |v₀|",
+    "angleTheta": "Injection Angle θ",
+    "anglePhi": "Injection Angle φ",
+    "rMin": "r min",
+    "rMax": "r max",
+    "compute": "Compute",
+    "reset": "Reset"
+  },
+  "descriptions": {
+    "singleLoop": "A single circular current loop produces a dipole-like magnetic field. The field lines form closed loops threading through the coil. On the axis, the field falls off as 1/(a²+z²)^(3/2).",
+    "helmholtz": "Two coaxial coils separated by their radius create a remarkably uniform field region between them — the Helmholtz configuration. Widely used in laboratory setups to cancel the Earth's field.",
+    "toroidal": "Arranging N coils symmetrically around a torus creates a toroidal magnetic field. Charged particles can be confined in such a geometry — the basis of tokamak and stellarator fusion reactors.",
+    "helicalSheet": "A radial line of starting points is advected along field lines. The rotational transform iota(r) ∝ r causes outer lines to wind faster, shearing the initial straight line into a helical sheet.",
+    "particle": "An ion injected into the magnetic field follows a helical trajectory — the Larmor orbit. The cyclotron radius r_L = mv⊥/(|q|B) can be tuned by adjusting the charge, mass, or injection velocity."
+  },
+  "charts": {
+    "bzOnAxis": "Bz on axis",
+    "axialPosition": "z / a",
+    "fieldStrength": "Bz (a.u.)"
+  },
+  "info": {
+    "tfBackend": "Compute backend",
+    "computing": "Computing…",
+    "done": "Done"
+  }
+}
