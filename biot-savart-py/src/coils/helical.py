@@ -1,3 +1,4 @@
+import warnings
 import numpy as np
 import matplotlib.pyplot as plt
 from dataclasses import dataclass
@@ -23,6 +24,35 @@ class CombinedField:
 
     def __call__(self, x):
         return B_toroidal_background(x, B0=self.B0, R0=self.R0) + self.coil_field(x)
+
+    def compile(self) -> "CombinedField":
+        """Pre-compute Numba-ready arrays for fast fixed-step RK4 integration.
+
+        Requires numba and that self.coil_field has been compiled (or will compile
+        it automatically).  Returns self so calls can be chained.
+        """
+        try:
+            import numba  # noqa: F401
+        except ImportError:
+            warnings.warn(
+                "numba is not installed; compile() has no effect. "
+                "Install numba for 50–100× speedup: pip install numba",
+                stacklevel=2,
+            )
+            return self
+
+        cf = self.coil_field
+        if not hasattr(cf, "_numba_data"):
+            cf.compile()
+
+        nd = cf._numba_data
+        if nd[0] != "bs":
+            warnings.warn("compile() only supports BiotSavartField coil_field", stacklevel=2)
+            return self
+
+        _, midpoints, weighted_dl, eps = nd
+        self._numba_data = ("combined", midpoints, weighted_dl, eps, float(self.B0), float(self.R0))
+        return self
 
 
 def double_torus_w_B(R0=2.0, a=0.5, nfp=3, n=1200, current=1.0, B0=1.0, eps=1e-4):
