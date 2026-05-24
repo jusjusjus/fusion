@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from . import (
+from ..core import (
         poincare,
         coords,
         fieldlines as fl,
@@ -35,12 +35,11 @@ def plot_fieldlines():
         np.linspace(0.0, 1.1, 5),
         np.linspace(0, 2*np.pi, 5, endpoint=False),
     )
+    x0s = [coords.toroidal_to_kartesian(R0=R0, phi=0.0, r=r, theta=theta)
+           for r, theta in zip(R.flatten(), THETA.flatten())]
+    colors = [plt.cm.viridis(i / len(x0s)) for i in range(len(x0s))]
 
-    for i, (r, theta) in enumerate(zip(R.flatten(), THETA.flatten())):
-        X = coords.toroidal_to_kartesian(R0=R0, phi=0.0, r=r, theta=theta)
-        print(f"Tracing field line from {X}")
-        line = fl.trace_fieldline(X, B_field, length=5.0, nsteps=500)
-        color = plt.cm.viridis(i / len(R.flatten()))
+    for color, line in zip(colors, fl.trace_fieldlines(x0s, B_field, length=5.0, nsteps=500)):
         ax.plot(line[:, 0], line[:, 1], line[:, 2], color=color, alpha=0.4)
 
     ax.set_box_aspect([1, 1, 0.6])

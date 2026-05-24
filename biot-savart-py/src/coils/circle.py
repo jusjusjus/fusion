@@ -1,10 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from . import biot_savart as bs
-from . import fieldlines as fl
-from . import plotting
+from ..core import fieldlines as fl
+from ..core import plotting
+from ..core.biot_savart import CurrentSegments
 
-def circular_loop(radius, z, n, current):
+
+def circular_loop(radius, z, n, current) -> CurrentSegments:
     """
     Discretized circular loop
     """
@@ -20,15 +21,15 @@ def circular_loop(radius, z, n, current):
     midpoints = 0.5 * (p0 + p1)
     dl = p1 - p0
 
-    return midpoints, dl, current
+    return CurrentSegments(midpoints=midpoints, dl=dl, current=current)
 
 
 def compare_symmetry_with_analytics():
     a = 1.0
-    loop_mid, loop_dl, I = circular_loop(radius=a, z=0.0, n=400, current=1.0)
+    loop = circular_loop(radius=a, z=0.0, n=400, current=1.0)
 
     def B_from_loop(x):
-        return bs.biot_savart_segments(x, loop_mid, loop_dl, current=I)
+        return loop.field_at(x)
 
     zs = np.linspace(-3, 3, 200)
     Bz_num = []
@@ -51,18 +52,17 @@ def compare_symmetry_with_analytics():
 
 
 def plot_field():
-    midpoints, dl, current = circular_loop(radius=1, z=0, n=100, current=0.1)
+    wire = circular_loop(radius=1, z=0, n=100, current=0.1)
     _, ax = plotting.setup_3d_axes()
-    ax.plot(midpoints[:, 0], midpoints[:, 1], midpoints[:, 2], label='Circular Loop')
+    ax.plot(wire.midpoints[:, 0], wire.midpoints[:, 1], wire.midpoints[:, 2], label='Circular Loop')
 
-    grid = np.meshgrid(
+    plotting.plot_vectorfield_3d(
+        ax, wire.field_at,
         np.linspace(-2.5, 2.5, 11),
         np.linspace(-2.5, 2.5, 11),
         np.linspace(-2.5, 2.5, 11),
+        color='r',
     )
-    for x in zip(*[g.flatten() for g in grid]):
-        B = bs.biot_savart_segments(x, midpoints, dl, current=current)
-        ax.quiver(*x, *B, color='r', label='Magnetic Field at Observation Point')
 
     plt.xlim(-2, 2)
     plt.ylim(-2, 2)
@@ -72,11 +72,11 @@ def plot_field():
 
 def plot_vertical_2d_slice():
     a = 1.0
-    loop_mid, loop_dl, I = circular_loop(radius=a, z=0.0, n=400, current=1.0)
+    loop = circular_loop(radius=a, z=0.0, n=400, current=1.0)
 
     def B_from_loop(x):
         x = np.asarray(x)
-        return bs.biot_savart_segments(x, loop_mid, loop_dl, current=I)
+        return loop.field_at(x)
 
     nx, nz = 100, 100
     xs = a * np.linspace(-2, 2, nx)
@@ -115,10 +115,10 @@ def plot_vertical_2d_slice():
 
 def plot_bz_along_axis():
     a = 10.0
-    loop_mid, loop_dl, I = circular_loop(radius=a, z=0.0, n=400, current=1.0)
+    loop = circular_loop(radius=a, z=0.0, n=400, current=1.0)
 
     def B_from_loop(x):
-        return bs.biot_savart_segments(x, loop_mid, loop_dl, current=I)
+        return loop.field_at(x)
 
     xs = a * np.linspace(-3, 3, 200)
     Bz_num = []
@@ -137,10 +137,10 @@ def plot_bz_along_axis():
 
 def plot_bmag_along_axis():
     a = 10.0
-    loop_mid, loop_dl, I = circular_loop(radius=a, z=0.0, n=400, current=1.0)
+    loop = circular_loop(radius=a, z=0.0, n=400, current=1.0)
 
     def B_from_loop(x):
-        return bs.biot_savart_segments(x, loop_mid, loop_dl, current=I)
+        return loop.field_at(x)
 
     xs = a * np.linspace(-3, 3, 200)
     Bmag_num = []
@@ -159,17 +159,17 @@ def plot_bmag_along_axis():
 
 def plot_fieldline():
     a = 1.0
-    loop_mid, loop_dl, I = circular_loop(radius=a, z=0.0, n=400, current=1.0)
+    loop = circular_loop(radius=a, z=0.0, n=400, current=1.0)
 
     def B_from_loop(x):
-        return bs.biot_savart_segments(x, loop_mid, loop_dl, current=I)
+        return loop.field_at(x)
 
     x0 = np.array([0.5, 0.0, 0.5])
     fieldline = fl.trace_fieldline(x0, B_from_loop)
 
     _, ax = plotting.setup_3d_axes()
     ax.plot(fieldline[:, 0], fieldline[:, 1], fieldline[:, 2], label='Field Line')
-    ax.plot(loop_mid[:, 0], loop_mid[:, 1], loop_mid[:, 2], label='Circular Loop')
+    ax.plot(loop.midpoints[:, 0], loop.midpoints[:, 1], loop.midpoints[:, 2], label='Circular Loop')
     plt.legend()
     plt.show()
 

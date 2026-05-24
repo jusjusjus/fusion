@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from dataclasses import dataclass
 
-from . import (
+from ..core import (
     biot_savart as bs,
     coords,
     fieldlines as fl,
@@ -9,9 +10,23 @@ from . import (
     plotting,
     printing,
 )
+from ..core.biot_savart import CurrentSegments
+
+
+@dataclass
+class CombinedField:
+    """Toroidal background field superimposed with a Biot-Savart coil field."""
+
+    coil_field: bs.BiotSavartField
+    B0: float = 1.0
+    R0: float = 2.0
+
+    def __call__(self, x):
+        return B_toroidal_background(x, B0=self.B0, R0=self.R0) + self.coil_field(x)
+
 
 def double_torus_w_B(R0=2.0, a=0.5, nfp=3, n=1200, current=1.0, B0=1.0, eps=1e-4):
-    params = { 
+    params = {
         "R0": R0,
         "a": a,
         "nfp": nfp,
@@ -20,18 +35,15 @@ def double_torus_w_B(R0=2.0, a=0.5, nfp=3, n=1200, current=1.0, B0=1.0, eps=1e-4
     }
     H1 = helical_toroidal_coil(**params, phase=0.0)
     H2 = helical_toroidal_coil(**params, phase=np.pi)
-    mids = [H1[0], H2[0]]
-    dl = [H1[1], H2[1]]
-    current = [H1[2], H2[2]]
+    sources = [H1, H2]
 
-    magnetic_field_fn = bs.make_B_from_segments(mids, dl, current, eps=eps)
-    if B0 is not None:
-        magnetic_field_fn = make_combined_B(magnetic_field_fn, B0=B0, R0=R0)
+    coil_field = bs.BiotSavartField(sources=sources, eps=eps)
+    magnetic_field_fn = CombinedField(coil_field=coil_field, B0=B0, R0=R0) if B0 is not None else coil_field
 
-    return mids, dl, current, magnetic_field_fn
+    return sources, magnetic_field_fn
 
 
-def helical_toroidal_coil(R0=2.0, a=0.5, nfp=3, phase=0.0, n=1200, current=1.0):
+def helical_toroidal_coil(R0=2.0, a=0.5, nfp=3, phase=0.0, n=1200, current=1.0) -> CurrentSegments:
     """
     Generate a helical toroidal coil.
 
@@ -52,8 +64,8 @@ def helical_toroidal_coil(R0=2.0, a=0.5, nfp=3, phase=0.0, n=1200, current=1.0):
 
     Returns
     -------
-    coil : Coil
-        A Coil object representing the helical toroidal coil.
+    coil : CurrentSegments
+        A CurrentSegments object representing the helical toroidal coil.
     """
     print("Creating Helicon")
     points = _helical_coil(R0, a, nfp, phase, n, current)
@@ -63,58 +75,43 @@ def helical_toroidal_coil(R0=2.0, a=0.5, nfp=3, phase=0.0, n=1200, current=1.0):
     midpoints = 0.5 * (p0 + p1)
     dl = p1 - p0
 
-    return midpoints, dl, current
+    return CurrentSegments(midpoints=midpoints, dl=dl, current=current)
 
 
-def B_from_coil(R0=2.0, a=0.5, nfp=3, phase=0.0, n=1200, current=1.0, eps=1e-4):
-    midpoints, dl, current = helical_toroidal_coil(R0, a, nfp, phase, n, current)
-    B = bs.make_B_from_segments([midpoints], [dl], [current], eps=eps)
-    return B
+def B_from_coil(R0=2.0, a=0.5, nfp=3, phase=0.0, n=1200, current=1.0, eps=1e-4) -> bs.BiotSavartField:
+    source = helical_toroidal_coil(R0, a, nfp, phase, n, current)
+    return bs.BiotSavartField(sources=[source], eps=eps)
 
 
 def plot_helical_coil():
-    points, _, _ = helical_toroidal_coil(nfp=5)
+    source = helical_toroidal_coil(nfp=5)
 
     _, ax = plotting.setup_3d_axes()
-    ax.plot(points[:, 0], points[:, 1], points[:, 2])
+    ax.plot(source.midpoints[:, 0], source.midpoints[:, 1], source.midpoints[:, 2])
     plt.show()
 
 
 def plot_vectorfield():
     eps = 1e-4
-    mids, dl, current = helical_toroidal_coil(nfp=5)
-    mids = [mids]
+    source = helical_toroidal_coil(nfp=5)
 
-    B_toroidal_coils = bs.make_B_from_segments(mids, [dl], [current], eps=eps)
-
-    x = np.linspace(-3.2, 3.0, 7)
-    y = np.linspace(-3.2, 3.0, 7)
-    z = np.linspace(-1.2, 1.0, 7)
-
-    X, Y, Z = np.meshgrid(x, y, z)
-
-    Bx = np.zeros_like(X)
-    By = np.zeros_like(X)
-    Bz = np.zeros_like(X)
-
-    for i in range(X.shape[0]):
-        for j in range(X.shape[1]):
-            for k in range(X.shape[2]):
-                B = B_toroidal_coils([X[i, j, k], Y[i, j, k], Z[i, j, k]])
-                Bx[i, j, k] = B[0]
-                By[i, j, k] = B[1]
-                Bz[i, j, k] = B[2]
+    B_toroidal_coils = bs.BiotSavartField(sources=[source], eps=eps)
 
     _, ax = plotting.setup_3d_axes()
-    ax.quiver(X, Y, Z, Bx, By, Bz, length=0.1, normalize=True)
-    plotting.plot_coils_3d(ax, mids)
+    plotting.plot_vectorfield_3d(
+        ax, B_toroidal_coils,
+        np.linspace(-3.2, 3.0, 7),
+        np.linspace(-3.2, 3.0, 7),
+        np.linspace(-1.2, 1.0, 7),
+    )
+    plotting.plot_coils_3d(ax, [source.midpoints])
     ax.set_title("Magnetic field from toroidal coils")
     plt.show()
 
 
 def plot_fieldlines(B0=None):
     R0 = 2.0
-    mids, dl, current, B_toroidal_coils = double_torus_w_B(
+    sources, B_toroidal_coils = double_torus_w_B(
         R0=R0,
         a=1.0,
         nfp=8,
@@ -122,18 +119,17 @@ def plot_fieldlines(B0=None):
     )
 
     _, ax = plotting.setup_3d_axes()
-    plotting.plot_coils_3d(ax, mids)
+    plotting.plot_coils_3d(ax, [s.midpoints for s in sources])
 
     R, THETA = np.meshgrid(
         np.linspace(0.0, 1.1, 1),
         np.linspace(0, 2*np.pi, 1, endpoint=False),
     )
+    x0s = [coords.toroidal_to_kartesian(R0=R0, phi=0.0, r=r, theta=theta)
+           for r, theta in zip(R.flatten(), THETA.flatten())]
+    colors = [plt.cm.viridis(i / len(x0s)) for i in range(len(x0s))]
 
-    for i, (r, theta) in enumerate(zip(R.flatten(), THETA.flatten())):
-        X = coords.toroidal_to_kartesian(R0=R0, phi=0.0, r=r, theta=theta)
-        print(f"Tracing field line from {X}")
-        line = fl.trace_fieldline(X, B_toroidal_coils, length=30.0, nsteps=2000)
-        color = plt.cm.viridis(i / len(R.flatten()))
+    for color, line in zip(colors, fl.trace_fieldlines(x0s, B_toroidal_coils, length=30.0, nsteps=2000)):
         ax.plot(line[:, 0], line[:, 1], line[:, 2], color=color, alpha=0.4)
 
     plt.show()
@@ -164,7 +160,7 @@ def _helical_coil(R0=1.0, a=0.5, nfp=3, phase=0.0, n=1200, current=1.0):
 def plot_poincare(B0=None, current=1.0):
     R0 = 2.0
     a = 1.55
-    mids, dl, current, B_total = double_torus_w_B(
+    sources, B_total = double_torus_w_B(
         R0=R0,
         a=a,
         nfp=5,
@@ -185,13 +181,6 @@ def plot_poincare(B0=None, current=1.0):
     plt.xlim(-a - amargin, a + amargin)
     plt.ylim(-a - amargin, a + amargin)
     plt.show()
-
-
-def make_combined_B(B_coils, B0=1.0, R0=2.0):
-    def combined(x):
-        return B_toroidal_background(x, B0=B0, R0=R0) + B_coils(x)
-
-    return combined
 
 
 def B_toroidal_background(x, B0=1.0, R0=2.0):
