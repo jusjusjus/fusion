@@ -6,9 +6,7 @@ on:
       - 'v*'
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 # Only one deployment at a time; cancel any in-progress run for the same ref.
 concurrency:
@@ -16,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -35,19 +33,9 @@ jobs:
         working-directory: magnetic-field-explorer
         run: npm run build
 
-      - uses: actions/configure-pages@v5
-
-      - uses: actions/upload-pages-artifact@v3
+      - name: Deploy to gh-pages branch
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          path: magnetic-field-explorer/dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          folder: magnetic-field-explorer/dist
+          branch: gh-pages
+          clean: true
