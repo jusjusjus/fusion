@@ -7,15 +7,11 @@ import LanguageToggle from './components/LanguageToggle';
 import SingleLoop from './lessons/SingleLoop';
 import HelmholtzCoils from './lessons/HelmholtzCoils';
 import ToroidalField from './lessons/ToroidalField';
-import HelicalSheet from './lessons/HelicalSheet';
-import ParticleInjection from './lessons/ParticleInjection';
 
 const LESSONS = {
   singleLoop: SingleLoop,
   helmholtz: HelmholtzCoils,
   toroidal: ToroidalField,
-  helicalSheet: HelicalSheet,
-  particle: ParticleInjection,
 };
 
 export default function App() {

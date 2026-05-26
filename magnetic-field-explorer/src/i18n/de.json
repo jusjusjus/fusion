@@ -4,9 +4,7 @@
   "lessons": {
     "singleLoop": "Einzelne Leiterschleife",
     "helmholtz": "Helmholtz-Spulen",
-    "toroidal": "Toroidales Feld",
-    "helicalSheet": "Helikale Fläche",
-    "particle": "Teilcheninjektion"
+    "toroidal": "Toroidales Feld"
   },
   "controls": {
     "radius": "Radius",
@@ -14,18 +12,8 @@
     "current": "Stromstärke",
     "numCoils": "Anzahl Spulen",
     "minorRadius": "Kleiner Radius",
-    "nfp": "Feldperioden",
     "numFieldLines": "Feldlinien",
     "traceLength": "Spurlänge",
-    "numSeeds": "Startpunkte",
-    "numTurns": "Umdrehungen",
-    "charge": "Ladung (q)",
-    "mass": "Masse (m)",
-    "speed": "Geschwindigkeit |v₀|",
-    "angleTheta": "Injektionswinkel θ",
-    "anglePhi": "Injektionswinkel φ",
-    "rMin": "r min",
-    "rMax": "r max",
     "compute": "Berechnen",
     "reset": "Zurücksetzen"
   },
@@ -51,8 +39,7 @@
     "helmholtz": "Zwei koaxiale Spulen im Abstand ihres Radius erzeugen ein bemerkenswert homogenes Feld dazwischen – die Helmholtz-Konfiguration. Häufig in Laboren eingesetzt, um das Erdmagnetfeld zu kompensieren.",
     "antiHelmholtz": "Mit umgekehrtem Strom in der unteren Spule stoßen sich die Flüsse gegenseitig ab und bilden eine Anti-Helmholtz- (Magnetspiegelkonfiguration). Das Feld ist in der Mitte null und stark an jeder Spule – nützlich zum Einfangen von Teilchen.",
     "toroidal": "N symmetrisch um einen Torus angeordnete Spulen erzeugen ein toroidales Magnetfeld. Geladene Teilchen können in dieser Geometrie eingeschlossen werden – die Grundlage von Tokamak- und Stellarator-Fusionsreaktoren.",
-    "helicalSheet": "Eine radiale Linie von Startpunkten wird entlang der Feldlinien advektiert. Der Rotationstransform iota(r) ∝ r bewirkt, dass äußere Linien schneller winden und die Gerade in eine helikale Fläche verformt wird.",
-    "particle": "Ein in das Magnetfeld injiziertes Ion folgt einer spiralförmigen Bahn – der Larmor-Orbit. Der Zyklotonradius r_L = mv⊥/(|q|B) lässt sich durch Ladung, Masse oder Injektionsgeschwindigkeit einstellen."
+    "helicalSheet": "Eine radiale Linie von Startpunkten wird entlang der Feldlinien advektiert. Der Rotationstransform iota(r) ∝ r bewirkt, dass äußere Linien schneller winden und die Gerade in eine helikale Fläche verformt wird."
   },
   "charts": {
     "bzOnAxis": "Bz auf der Achse",
