@@ -98,7 +98,9 @@ export default function ToroidalField() {
   return (
     <div className="lesson-layout">
       <div className="scene-area">
-        <Scene cameraPosition={[6, 4, 6]} controlsRef={controlsRef} cameraRef={cameraRef}>
+        <Scene cameraPosition={[6, 4, 6]} controlsRef={controlsRef} cameraRef={cameraRef}
+               injectionMode={injection.injectionMode}
+               onInject={(cam) => injection.injectAt(cam)}>
           {coilMeshes.map((midpoints, index) => (
             <group key={index}>
               <CoilMesh

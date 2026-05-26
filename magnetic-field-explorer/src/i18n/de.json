@@ -21,7 +21,7 @@
     "title": "Teilcheninjektion",
     "modeOn": "Aktivieren",
     "modeOff": "Deaktivieren",
-    "hint": "Bringe die Kamera zum gewünschten Startpunkt. Das Teilchen wird in Blickrichtung gestartet.",
+    "hint": "Navigiere mit WASD + Pfeiltasten. Pfeiltasten drehen die Sicht; WASD bewegt dich vorwärts/seitwärts. Leertaste injiziert ein Teilchen.",
     "inject": "Hier injizieren",
     "clear": "Spuren löschen",
     "speed": "Geschwindigkeit |v₀|",

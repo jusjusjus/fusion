@@ -21,7 +21,7 @@
     "title": "Particle Injection",
     "modeOn": "Enable",
     "modeOff": "Disable",
-    "hint": "Orbit/zoom so the camera is at the desired injection point. The particle launches in the direction you're looking.",
+    "hint": "Navigate with WASD + arrow keys. Arrow keys look around; WASD moves. Press Space to inject a particle.",
     "inject": "Inject here",
     "clear": "Clear traces",
     "speed": "Speed |v₀|",

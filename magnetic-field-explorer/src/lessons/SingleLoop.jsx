@@ -82,7 +82,9 @@ export default function SingleLoop() {
   return (
     <div className="lesson-layout">
       <div className="scene-area">
-        <Scene controlsRef={controlsRef} cameraRef={cameraRef}>
+        <Scene controlsRef={controlsRef} cameraRef={cameraRef}
+               injectionMode={injection.injectionMode}
+               onInject={(cam) => injection.injectAt(cam)}>
           <CoilMesh midpoints={coil.midpoints} color="#ffaa00" />
           <CurrentArrows midpoints={coil.midpoints} weightedDl={coil.weightedDl} color="#ffaa00" />
           <FieldLines lines={fieldLines} colormap={colormap} />

@@ -108,7 +108,9 @@ export default function HelmholtzCoils() {
   return (
     <div className="lesson-layout">
       <div className="scene-area">
-        <Scene controlsRef={controlsRef} cameraRef={cameraRef}>
+        <Scene controlsRef={controlsRef} cameraRef={cameraRef}
+               injectionMode={injection.injectionMode}
+               onInject={(cam) => injection.injectAt(cam)}>
           <CoilMesh midpoints={coil1.midpoints} color={COLOR_COIL1} />
           <CurrentArrows midpoints={coil1.midpoints} weightedDl={coil1.weightedDl} color={COLOR_COIL1} />
           <CoilMesh midpoints={coil2.midpoints} color={coil2Color} />
