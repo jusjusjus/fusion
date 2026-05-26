@@ -1,14 +1,19 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as THREE from 'three';
 import Scene from '../viz/Scene.jsx';
 import CoilMesh from '../viz/CoilMesh.jsx';
+import CurrentArrows from '../viz/CurrentArrows.jsx';
 import FieldLines from '../viz/FieldLines.jsx';
+import InjectionMarker from '../viz/InjectionMarker.jsx';
+import ParticleTraces from '../viz/ParticleTraces.jsx';
 import ControlPanel from '../components/ControlPanel.jsx';
+import InjectionPanel from '../components/InjectionPanel.jsx';
 import useStore from '../store/useStore.js';
 import { toroidalSet } from '../physics/coils.js';
 import { fieldAtPoint } from '../physics/biotSavart.js';
 import { traceFieldlines } from '../physics/fieldlines.js';
+import { useParticleInjection } from '../hooks/useParticleInjection.js';
 
 export default function ToroidalField() {
   const { t } = useTranslation();
@@ -16,6 +21,7 @@ export default function ToroidalField() {
   const { N, R0, a, current, n, numLines, traceLength } = params.toroidal;
   const [computing, setComputing] = useState(false);
   const [fieldLines, setFieldLines] = useState([]);
+  const controlsRef = useRef();
 
   const coils = useMemo(() => toroidalSet({ N, R0, a, n, current }), [N, R0, a, n, current]);
 
@@ -23,6 +29,8 @@ export default function ToroidalField() {
     () => (x) => fieldAtPoint(x, coils.midpoints, coils.weightedDl),
     [coils]
   );
+
+  const injection = useParticleInjection(bFunc);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -76,19 +84,40 @@ export default function ToroidalField() {
     return meshes;
   }, [coils, N]);
 
+  const coilWeightedDls = useMemo(() => {
+    const weightedDl = coils.weightedDl;
+    const perCoil = weightedDl.length / 3 / N;
+    const result = [];
+    for (let i = 0; i < N; i += 1) {
+      result.push(weightedDl.slice(i * perCoil * 3, (i + 1) * perCoil * 3));
+    }
+    return result;
+  }, [coils, N]);
+
   return (
     <div className="lesson-layout">
       <div className="scene-area">
-        <Scene cameraPosition={[6, 4, 6]}>
+        <Scene cameraPosition={[6, 4, 6]} controlsRef={controlsRef}>
           {coilMeshes.map((midpoints, index) => (
-            <CoilMesh
-              key={index}
-              midpoints={midpoints}
-              color={`hsl(${180 + index * 15}, 80%, 60%)`}
-              radius={0.04}
-            />
+            <group key={index}>
+              <CoilMesh
+                midpoints={midpoints}
+                color={`hsl(${180 + index * 15}, 80%, 60%)`}
+                radius={0.04}
+              />
+              <CurrentArrows
+                midpoints={midpoints}
+                weightedDl={coilWeightedDls[index]}
+                color={`hsl(${180 + index * 15}, 80%, 60%)`}
+                nArrows={3}
+                coneRadius={0.05}
+                coneHeight={0.15}
+              />
+            </group>
           ))}
           <FieldLines lines={fieldLines} colormap={colormap} lineWidth={1.5} />
+          <InjectionMarker active={injection.injectionMode} controlsRef={controlsRef} />
+          <ParticleTraces particles={injection.particles} />
         </Scene>
       </div>
       <div className="sidebar">
@@ -98,6 +127,18 @@ export default function ToroidalField() {
           computing={computing}
         />
         <p className="info-text">{computing ? t('info.computing') : t('info.done')}</p>
+        <InjectionPanel
+          active={injection.injectionMode}
+          onToggle={injection.toggleInjectionMode}
+          onInject={() => injection.injectAt(controlsRef.current?.target)}
+          onClear={injection.clearParticles}
+          particleCount={injection.particles.length}
+          speed={injection.speed}   onSpeed={injection.setSpeed}
+          theta={injection.theta}   onTheta={injection.setTheta}
+          phi={injection.phi}       onPhi={injection.setPhi}
+          charge={injection.charge} onCharge={injection.setCharge}
+          mass={injection.mass}     onMass={injection.setMass}
+        />
         <p className="description">{t('descriptions.toroidal')}</p>
       </div>
     </div>

@@ -1,13 +1,18 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Scene from '../viz/Scene.jsx';
 import CoilMesh from '../viz/CoilMesh.jsx';
+import CurrentArrows from '../viz/CurrentArrows.jsx';
 import ParticleTrack from '../viz/ParticleTrack.jsx';
+import InjectionMarker from '../viz/InjectionMarker.jsx';
+import ParticleTraces from '../viz/ParticleTraces.jsx';
 import ControlPanel from '../components/ControlPanel.jsx';
+import InjectionPanel from '../components/InjectionPanel.jsx';
 import useStore from '../store/useStore.js';
 import { circularLoop } from '../physics/coils.js';
 import { fieldAtPoint } from '../physics/biotSavart.js';
 import { traceParticle } from '../physics/particle.js';
+import { useParticleInjection } from '../hooks/useParticleInjection.js';
 
 export default function ParticleInjection() {
   const { t } = useTranslation();
@@ -16,6 +21,7 @@ export default function ParticleInjection() {
   const [computing, setComputing] = useState(false);
   const [trajectory, setTrajectory] = useState(null);
   const [progress, setProgress] = useState(1);
+  const controlsRef = useRef();
 
   const coil = useMemo(() => circularLoop({ radius: 1, z: 0, n: 200, current: 2 }), []);
 
@@ -23,6 +29,8 @@ export default function ParticleInjection() {
     () => (x) => fieldAtPoint(x, coil.midpoints, coil.weightedDl),
     [coil]
   );
+
+  const injection = useParticleInjection(bFunc);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -54,9 +62,12 @@ export default function ParticleInjection() {
   return (
     <div className="lesson-layout">
       <div className="scene-area">
-        <Scene>
+        <Scene controlsRef={controlsRef}>
           <CoilMesh midpoints={coil.midpoints} color="#ffaa00" />
+          <CurrentArrows midpoints={coil.midpoints} weightedDl={coil.weightedDl} color="#ffaa00" />
           {trajectory && <ParticleTrack positions={trajectory} progress={progress} color="#ff4466" />}
+          <InjectionMarker active={injection.injectionMode} controlsRef={controlsRef} />
+          <ParticleTraces particles={injection.particles} />
         </Scene>
       </div>
       <div className="sidebar">
@@ -81,6 +92,18 @@ export default function ParticleInjection() {
           </div>
         </ControlPanel>
         <p className="info-text">{computing ? t('info.computing') : t('info.done')}</p>
+        <InjectionPanel
+          active={injection.injectionMode}
+          onToggle={injection.toggleInjectionMode}
+          onInject={() => injection.injectAt(controlsRef.current?.target)}
+          onClear={injection.clearParticles}
+          particleCount={injection.particles.length}
+          speed={injection.speed}   onSpeed={injection.setSpeed}
+          theta={injection.theta}   onTheta={injection.setTheta}
+          phi={injection.phi}       onPhi={injection.setPhi}
+          charge={injection.charge} onCharge={injection.setCharge}
+          mass={injection.mass}     onMass={injection.setMass}
+        />
         <p className="description">{t('descriptions.particle')}</p>
       </div>
     </div>

@@ -4,7 +4,14 @@
  */
 
 /** Trace a single field line. Returns Float32Array of shape (nsteps+1)*3. */
-export function traceFieldline(x0, bFunc, { length = 20, nsteps = 800 } = {}) {
+export function traceFieldline(x0, bFunc, { length = 20, nsteps = 800, bidirectional = false } = {}) {
+  if (bidirectional) {
+    return traceFieldlineBidirectional(x0, bFunc, { length, nsteps });
+  }
+  return traceFieldlineForward(x0, bFunc, length, nsteps);
+}
+
+function traceFieldlineForward(x0, bFunc, length, nsteps) {
   const dt = length / nsteps;
   const traj = new Float32Array((nsteps + 1) * 3);
   let x = [...x0];
@@ -33,6 +40,40 @@ export function traceFieldline(x0, bFunc, { length = 20, nsteps = 800 } = {}) {
     traj[(i + 1) * 3 + 2] = x[2];
   }
   return traj;
+}
+
+/**
+ * Bidirectional trace: half-arc backward + half-arc forward from the seed.
+ * Produces a continuous line: [backward_terminus ... seed ... forward_terminus].
+ * Total output length is (nsteps + 1) * 3, same as a forward-only trace.
+ */
+function traceFieldlineBidirectional(x0, bFunc, { length, nsteps }) {
+  const halfSteps = Math.floor(nsteps / 2);
+  const halfLen = length / 2;
+
+  const negBFunc = (x) => { const b = bFunc(x); return [-b[0], -b[1], -b[2]]; };
+  const backward = traceFieldlineForward(x0, negBFunc, halfLen, halfSteps);
+  const forward  = traceFieldlineForward(x0, bFunc,    halfLen, halfSteps);
+
+  // Total points: (halfSteps+1) reversed backward + halfSteps forward (skip duplicate seed)
+  const totalPts = (halfSteps + 1) + halfSteps;
+  const result = new Float32Array(totalPts * 3);
+
+  // Reversed backward: backward[halfSteps] → backward[0] (seed ends up at index halfSteps)
+  for (let i = 0; i <= halfSteps; i++) {
+    const src = halfSteps - i;
+    result[i * 3 + 0] = backward[src * 3 + 0];
+    result[i * 3 + 1] = backward[src * 3 + 1];
+    result[i * 3 + 2] = backward[src * 3 + 2];
+  }
+  // Forward (skip point 0 = seed, already present at index halfSteps)
+  for (let i = 1; i <= halfSteps; i++) {
+    const dest = halfSteps + i;
+    result[dest * 3 + 0] = forward[i * 3 + 0];
+    result[dest * 3 + 1] = forward[i * 3 + 1];
+    result[dest * 3 + 2] = forward[i * 3 + 2];
+  }
+  return result;
 }
 
 /** Trace multiple field lines. Returns array of Float32Arrays. */

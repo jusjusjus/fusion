@@ -29,9 +29,27 @@
     "compute": "Compute",
     "reset": "Reset"
   },
+  "injection": {
+    "title": "Particle Injection",
+    "modeOn": "Enable",
+    "modeOff": "Disable",
+    "hint": "Pan the scene to move the crosshair to the desired injection point, then click Inject.",
+    "inject": "Inject here",
+    "clear": "Clear traces",
+    "speed": "Speed |v₀|",
+    "charge": "Charge (q)",
+    "mass": "Mass (m)"
+  },
+  "helmholtz": {
+    "flipCoil2": "Reverse coil 2",
+    "restoreCoil2": "Restore coil 2",
+    "configNormal": "⚙ Helmholtz",
+    "configAnti": "⚙ Anti-Helmholtz"
+  },
   "descriptions": {
     "singleLoop": "A single circular current loop produces a dipole-like magnetic field. The field lines form closed loops threading through the coil. On the axis, the field falls off as 1/(a²+z²)^(3/2).",
     "helmholtz": "Two coaxial coils separated by their radius create a remarkably uniform field region between them — the Helmholtz configuration. Widely used in laboratory setups to cancel the Earth's field.",
+    "antiHelmholtz": "With the lower coil's current reversed the two coils repel each other's flux, creating an anti-Helmholtz (magnetic mirror) configuration. The field is zero at the midplane and strong at each coil — useful for trapping particles.",
     "toroidal": "Arranging N coils symmetrically around a torus creates a toroidal magnetic field. Charged particles can be confined in such a geometry — the basis of tokamak and stellarator fusion reactors.",
     "helicalSheet": "A radial line of starting points is advected along field lines. The rotational transform iota(r) ∝ r causes outer lines to wind faster, shearing the initial straight line into a helical sheet.",
     "particle": "An ion injected into the magnetic field follows a helical trajectory — the Larmor orbit. The cyclotron radius r_L = mv⊥/(|q|B) can be tuned by adjusting the charge, mass, or injection velocity."

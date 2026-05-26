@@ -233,6 +233,124 @@ input[type="range"] {
 }
 .lang-toggle:hover { background: var(--border); }
 
+/* ── Particle Injection Panel ─────────────────────────────────── */
+.injection-panel {
+  border-top: 1px solid var(--border);
+  padding: 10px 12px;
+}
+
+.injection-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.injection-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.inject-toggle-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.inject-toggle-btn:hover { background: var(--border); color: var(--text); }
+.inject-toggle-btn.active {
+  background: #2d1a24;
+  border-color: var(--accent2);
+  color: var(--accent2);
+}
+
+.injection-hint {
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.injection-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.injection-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.inject-btn {
+  flex: 1;
+  padding: 7px 10px;
+  background: var(--accent2);
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: opacity 0.15s;
+}
+.inject-btn:hover { opacity: 0.85; }
+
+.clear-btn {
+  flex: 1;
+  padding: 7px 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background 0.15s;
+}
+.clear-btn:hover:not(:disabled) { background: var(--border); color: var(--text); }
+.clear-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Flip row (Helmholtz coil direction toggle) ───────────────── */
+.flip-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-top: 1px solid var(--border);
+  gap: 8px;
+}
+
+.config-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--success);
+}
+
+.flip-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.flip-btn:hover { background: var(--border); }
+.flip-btn.flipped {
+  border-color: var(--accent2);
+  color: var(--accent2);
+}
+
 /* ── Responsive ───────────────────────────────────────────────── */
 @media (max-width: 640px) {
   :root { --sidebar-w: 220px; }

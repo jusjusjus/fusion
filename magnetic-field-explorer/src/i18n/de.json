@@ -29,9 +29,27 @@
     "compute": "Berechnen",
     "reset": "Zurücksetzen"
   },
+  "injection": {
+    "title": "Teilcheninjektion",
+    "modeOn": "Aktivieren",
+    "modeOff": "Deaktivieren",
+    "hint": "Drehe die Szene, um das Fadenkreuz zum gewünschten Injektionspunkt zu bewegen, dann auf Injizieren klicken.",
+    "inject": "Hier injizieren",
+    "clear": "Spuren löschen",
+    "speed": "Geschwindigkeit |v₀|",
+    "charge": "Ladung (q)",
+    "mass": "Masse (m)"
+  },
+  "helmholtz": {
+    "flipCoil2": "Spule 2 umkehren",
+    "restoreCoil2": "Spule 2 wiederherstellen",
+    "configNormal": "⚙ Helmholtz",
+    "configAnti": "⚙ Anti-Helmholtz"
+  },
   "descriptions": {
     "singleLoop": "Eine einzelne kreisförmige Leiterschleife erzeugt ein dipolartiges Magnetfeld. Die Feldlinien bilden geschlossene Schleifen durch die Spule. Auf der Achse fällt das Feld wie 1/(a²+z²)^(3/2) ab.",
     "helmholtz": "Zwei koaxiale Spulen im Abstand ihres Radius erzeugen ein bemerkenswert homogenes Feld dazwischen – die Helmholtz-Konfiguration. Häufig in Laboren eingesetzt, um das Erdmagnetfeld zu kompensieren.",
+    "antiHelmholtz": "Mit umgekehrtem Strom in der unteren Spule stoßen sich die Flüsse gegenseitig ab und bilden eine Anti-Helmholtz- (Magnetspiegelkonfiguration). Das Feld ist in der Mitte null und stark an jeder Spule – nützlich zum Einfangen von Teilchen.",
     "toroidal": "N symmetrisch um einen Torus angeordnete Spulen erzeugen ein toroidales Magnetfeld. Geladene Teilchen können in dieser Geometrie eingeschlossen werden – die Grundlage von Tokamak- und Stellarator-Fusionsreaktoren.",
     "helicalSheet": "Eine radiale Linie von Startpunkten wird entlang der Feldlinien advektiert. Der Rotationstransform iota(r) ∝ r bewirkt, dass äußere Linien schneller winden und die Gerade in eine helikale Fläche verformt wird.",
     "particle": "Ein in das Magnetfeld injiziertes Ion folgt einer spiralförmigen Bahn – der Larmor-Orbit. Der Zyklotonradius r_L = mv⊥/(|q|B) lässt sich durch Ladung, Masse oder Injektionsgeschwindigkeit einstellen."
