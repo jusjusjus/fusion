@@ -233,6 +233,41 @@ input[type="range"] {
 }
 .lang-toggle:hover { background: var(--border); }
 
+/* ── Injection crosshair overlay ─────────────────────────────── */
+.crosshair {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.crosshair-h,
+.crosshair-v {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.crosshair-h {
+  width: 24px;
+  height: 1.5px;
+}
+
+.crosshair-v {
+  width: 1.5px;
+  height: 24px;
+}
+
+.crosshair-dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+}
+
 /* ── Particle Injection Panel ─────────────────────────────────── */
 .injection-panel {
   border-top: 1px solid var(--border);

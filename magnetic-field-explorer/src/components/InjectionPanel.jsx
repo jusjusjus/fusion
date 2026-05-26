@@ -6,12 +6,10 @@ import { useTranslation } from 'react-i18next';
  * Props:
  *   active           bool      - whether injection mode is on
  *   onToggle         fn        - toggle injection mode
- *   onInject         fn        - inject particle at current orbit target
+ *   onInject         fn        - inject particle from camera viewpoint
  *   onClear          fn        - clear all traces
  *   particleCount    number    - how many traces exist
  *   speed / onSpeed  value+setter
- *   theta / onTheta  value+setter
- *   phi   / onPhi    value+setter
  *   charge/onCharge  value+setter
  *   mass  / onMass   value+setter
  */
@@ -22,8 +20,6 @@ export default function InjectionPanel({
   onClear,
   particleCount = 0,
   speed,  onSpeed,
-  theta,  onTheta,
-  phi,    onPhi,
   charge, onCharge,
   mass,   onMass,
 }) {
@@ -47,8 +43,6 @@ export default function InjectionPanel({
 
           <div className="injection-controls">
             <SliderRow label={t('injection.speed')} value={speed} min={0.1} max={5} step={0.1} onChange={onSpeed} />
-            <SliderRow label="θ" value={theta} min={0} max={Math.PI} step={0.05} onChange={onTheta} fmt={v => `${(v * 180 / Math.PI).toFixed(0)}°`} />
-            <SliderRow label="φ" value={phi}   min={0} max={2 * Math.PI} step={0.05} onChange={onPhi} fmt={v => `${(v * 180 / Math.PI).toFixed(0)}°`} />
             <SliderRow label={t('injection.charge')} value={charge} min={0.1} max={5} step={0.1} onChange={onCharge} />
             <SliderRow label={t('injection.mass')}   value={mass}   min={0.1} max={5} step={0.1} onChange={onMass} />
           </div>
@@ -71,13 +65,12 @@ export default function InjectionPanel({
   );
 }
 
-function SliderRow({ label, value, min, max, step, onChange, fmt }) {
-  const display = fmt ? fmt(value) : +value.toFixed(2);
+function SliderRow({ label, value, min, max, step, onChange }) {
   return (
     <div className="control-row">
       <label>
         {label}
-        <span className="control-value">{display}</span>
+        <span className="control-value">{+value.toFixed(2)}</span>
       </label>
       <input
         type="range"

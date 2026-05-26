@@ -116,9 +116,9 @@ export default function HelicalSheet() {
               <meshStandardMaterial color={marker.color} emissive={marker.color} emissiveIntensity={0.3} />
             </mesh>
           ))}
-          <InjectionMarker active={injection.injectionMode} />
           <ParticleTraces particles={injection.particles} />
         </Scene>
+        <InjectionMarker active={injection.injectionMode} />
       </div>
       <div className="sidebar">
         <ControlPanel
@@ -134,8 +134,6 @@ export default function HelicalSheet() {
           onClear={injection.clearParticles}
           particleCount={injection.particles.length}
           speed={injection.speed}   onSpeed={injection.setSpeed}
-          theta={injection.theta}   onTheta={injection.setTheta}
-          phi={injection.phi}       onPhi={injection.setPhi}
           charge={injection.charge} onCharge={injection.setCharge}
           mass={injection.mass}     onMass={injection.setMass}
         />

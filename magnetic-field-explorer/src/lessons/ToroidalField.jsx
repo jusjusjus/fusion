@@ -117,9 +117,9 @@ export default function ToroidalField() {
             </group>
           ))}
           <FieldLines lines={fieldLines} colormap={colormap} lineWidth={1.5} />
-          <InjectionMarker active={injection.injectionMode} />
           <ParticleTraces particles={injection.particles} />
         </Scene>
+        <InjectionMarker active={injection.injectionMode} />
       </div>
       <div className="sidebar">
         <ControlPanel
@@ -135,8 +135,6 @@ export default function ToroidalField() {
           onClear={injection.clearParticles}
           particleCount={injection.particles.length}
           speed={injection.speed}   onSpeed={injection.setSpeed}
-          theta={injection.theta}   onTheta={injection.setTheta}
-          phi={injection.phi}       onPhi={injection.setPhi}
           charge={injection.charge} onCharge={injection.setCharge}
           mass={injection.mass}     onMass={injection.setMass}
         />

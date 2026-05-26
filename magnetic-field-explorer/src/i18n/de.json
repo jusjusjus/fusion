@@ -33,7 +33,7 @@
     "title": "Teilcheninjektion",
     "modeOn": "Aktivieren",
     "modeOff": "Deaktivieren",
-    "hint": "Bewege die Kamera zum gewünschten Injektionspunkt, dann auf Injizieren klicken.",
+    "hint": "Bringe die Kamera zum gewünschten Startpunkt. Das Teilchen wird in Blickrichtung gestartet.",
     "inject": "Hier injizieren",
     "clear": "Spuren löschen",
     "speed": "Geschwindigkeit |v₀|",

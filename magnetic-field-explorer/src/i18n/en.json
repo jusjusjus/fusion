@@ -33,7 +33,7 @@
     "title": "Particle Injection",
     "modeOn": "Enable",
     "modeOff": "Disable",
-    "hint": "Move the camera to the desired injection point, then click Inject.",
+    "hint": "Orbit/zoom so the camera is at the desired injection point. The particle launches in the direction you're looking.",
     "inject": "Inject here",
     "clear": "Clear traces",
     "speed": "Speed |v₀|",

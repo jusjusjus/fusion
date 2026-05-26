@@ -114,9 +114,9 @@ export default function HelmholtzCoils() {
           <CoilMesh midpoints={coil2.midpoints} color={coil2Color} />
           <CurrentArrows midpoints={coil2.midpoints} weightedDl={coil2.weightedDl} color={coil2Color} />
           <FieldLines lines={fieldLines} colormap={colormap} />
-          <InjectionMarker active={injection.injectionMode} />
           <ParticleTraces particles={injection.particles} />
         </Scene>
+        <InjectionMarker active={injection.injectionMode} />
       </div>
       <div className="sidebar">
         <ControlPanel
@@ -141,8 +141,6 @@ export default function HelmholtzCoils() {
           onClear={injection.clearParticles}
           particleCount={injection.particles.length}
           speed={injection.speed}   onSpeed={injection.setSpeed}
-          theta={injection.theta}   onTheta={injection.setTheta}
-          phi={injection.phi}       onPhi={injection.setPhi}
           charge={injection.charge} onCharge={injection.setCharge}
           mass={injection.mass}     onMass={injection.setMass}
         />

@@ -67,9 +67,9 @@ export default function ParticleInjection() {
           <CoilMesh midpoints={coil.midpoints} color="#ffaa00" />
           <CurrentArrows midpoints={coil.midpoints} weightedDl={coil.weightedDl} color="#ffaa00" />
           {trajectory && <ParticleTrack positions={trajectory} progress={progress} color="#ff4466" />}
-          <InjectionMarker active={injection.injectionMode} />
           <ParticleTraces particles={injection.particles} />
         </Scene>
+        <InjectionMarker active={injection.injectionMode} />
       </div>
       <div className="sidebar">
         <ControlPanel
@@ -100,8 +100,6 @@ export default function ParticleInjection() {
           onClear={injection.clearParticles}
           particleCount={injection.particles.length}
           speed={injection.speed}   onSpeed={injection.setSpeed}
-          theta={injection.theta}   onTheta={injection.setTheta}
-          phi={injection.phi}       onPhi={injection.setPhi}
           charge={injection.charge} onCharge={injection.setCharge}
           mass={injection.mass}     onMass={injection.setMass}
         />
