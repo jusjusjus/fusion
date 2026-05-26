@@ -22,6 +22,7 @@ export default function HelicalSheet() {
   const [computing, setComputing] = useState(false);
   const [fieldLines, setFieldLines] = useState([]);
   const controlsRef = useRef();
+  const cameraRef = useRef();
 
   const coilPair = useMemo(() => {
     const coil1 = helicalCoil({ R0, a: a * 0.7, nfp, phase: 0, n: 400, current: 1 });
@@ -103,7 +104,7 @@ export default function HelicalSheet() {
   return (
     <div className="lesson-layout">
       <div className="scene-area">
-        <Scene cameraPosition={[6, 3, 6]} controlsRef={controlsRef}>
+        <Scene cameraPosition={[6, 3, 6]} controlsRef={controlsRef} cameraRef={cameraRef}>
           <CoilMesh midpoints={coil1Mesh} color="#ff6644" radius={0.04} />
           <CurrentArrows midpoints={coil1Mesh} weightedDl={coil1WeightedDl} color="#ff6644" nArrows={12} coneRadius={0.05} coneHeight={0.14} />
           <CoilMesh midpoints={coil2Mesh} color="#44aaff" radius={0.04} />
@@ -115,7 +116,7 @@ export default function HelicalSheet() {
               <meshStandardMaterial color={marker.color} emissive={marker.color} emissiveIntensity={0.3} />
             </mesh>
           ))}
-          <InjectionMarker active={injection.injectionMode} controlsRef={controlsRef} />
+          <InjectionMarker active={injection.injectionMode} />
           <ParticleTraces particles={injection.particles} />
         </Scene>
       </div>
@@ -129,7 +130,7 @@ export default function HelicalSheet() {
         <InjectionPanel
           active={injection.injectionMode}
           onToggle={injection.toggleInjectionMode}
-          onInject={() => injection.injectAt(controlsRef.current?.target)}
+          onInject={() => injection.injectAt(cameraRef.current)}
           onClear={injection.clearParticles}
           particleCount={injection.particles.length}
           speed={injection.speed}   onSpeed={injection.setSpeed}

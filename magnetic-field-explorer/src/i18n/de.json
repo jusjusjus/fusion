@@ -33,7 +33,7 @@
     "title": "Teilcheninjektion",
     "modeOn": "Aktivieren",
     "modeOff": "Deaktivieren",
-    "hint": "Drehe die Szene, um das Fadenkreuz zum gewünschten Injektionspunkt zu bewegen, dann auf Injizieren klicken.",
+    "hint": "Bewege die Kamera zum gewünschten Injektionspunkt, dann auf Injizieren klicken.",
     "inject": "Hier injizieren",
     "clear": "Spuren löschen",
     "speed": "Geschwindigkeit |v₀|",

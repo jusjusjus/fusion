@@ -1,19 +1,23 @@
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
+
+const _dir = new THREE.Vector3();
 
 /**
- * Translucent sphere + crosshair that tracks the OrbitControls orbit target.
+ * Translucent sphere + crosshair placed slightly in front of the camera along
+ * the view direction — giving visual feedback of where the particle will start.
  * Visible only when `active` is true.
- * The orbit target is what the user controls by panning — it serves as the
- * particle injection point.
  */
-export default function InjectionMarker({ controlsRef, active }) {
+export default function InjectionMarker({ active }) {
   const groupRef = useRef();
 
-  useFrame(() => {
-    if (!active || !controlsRef?.current || !groupRef.current) return;
-    const t = controlsRef.current.target;
-    groupRef.current.position.set(t.x, t.y, t.z);
+  useFrame(({ camera }) => {
+    if (!active || !groupRef.current) return;
+    camera.getWorldDirection(_dir);
+    groupRef.current.position
+      .copy(camera.position)
+      .addScaledVector(_dir, 0.5);
   });
 
   if (!active) return null;

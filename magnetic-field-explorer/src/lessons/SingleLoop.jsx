@@ -24,6 +24,7 @@ export default function SingleLoop() {
   const [fieldLines, setFieldLines] = useState([]);
   const [bzData, setBzData] = useState([]);
   const controlsRef = useRef();
+  const cameraRef = useRef();
 
   const coil = useMemo(() => circularLoop({ radius, z: 0, n, current }), [radius, current, n]);
 
@@ -81,11 +82,11 @@ export default function SingleLoop() {
   return (
     <div className="lesson-layout">
       <div className="scene-area">
-        <Scene controlsRef={controlsRef}>
+        <Scene controlsRef={controlsRef} cameraRef={cameraRef}>
           <CoilMesh midpoints={coil.midpoints} color="#ffaa00" />
           <CurrentArrows midpoints={coil.midpoints} weightedDl={coil.weightedDl} color="#ffaa00" />
           <FieldLines lines={fieldLines} colormap={colormap} />
-          <InjectionMarker active={injection.injectionMode} controlsRef={controlsRef} />
+          <InjectionMarker active={injection.injectionMode} />
           <ParticleTraces particles={injection.particles} />
         </Scene>
       </div>
@@ -113,7 +114,7 @@ export default function SingleLoop() {
         <InjectionPanel
           active={injection.injectionMode}
           onToggle={injection.toggleInjectionMode}
-          onInject={() => injection.injectAt(controlsRef.current?.target)}
+          onInject={() => injection.injectAt(cameraRef.current)}
           onClear={injection.clearParticles}
           particleCount={injection.particles.length}
           speed={injection.speed}   onSpeed={injection.setSpeed}

@@ -22,6 +22,7 @@ export default function ParticleInjection() {
   const [trajectory, setTrajectory] = useState(null);
   const [progress, setProgress] = useState(1);
   const controlsRef = useRef();
+  const cameraRef = useRef();
 
   const coil = useMemo(() => circularLoop({ radius: 1, z: 0, n: 200, current: 2 }), []);
 
@@ -62,11 +63,11 @@ export default function ParticleInjection() {
   return (
     <div className="lesson-layout">
       <div className="scene-area">
-        <Scene controlsRef={controlsRef}>
+        <Scene controlsRef={controlsRef} cameraRef={cameraRef}>
           <CoilMesh midpoints={coil.midpoints} color="#ffaa00" />
           <CurrentArrows midpoints={coil.midpoints} weightedDl={coil.weightedDl} color="#ffaa00" />
           {trajectory && <ParticleTrack positions={trajectory} progress={progress} color="#ff4466" />}
-          <InjectionMarker active={injection.injectionMode} controlsRef={controlsRef} />
+          <InjectionMarker active={injection.injectionMode} />
           <ParticleTraces particles={injection.particles} />
         </Scene>
       </div>
@@ -95,7 +96,7 @@ export default function ParticleInjection() {
         <InjectionPanel
           active={injection.injectionMode}
           onToggle={injection.toggleInjectionMode}
-          onInject={() => injection.injectAt(controlsRef.current?.target)}
+          onInject={() => injection.injectAt(cameraRef.current)}
           onClear={injection.clearParticles}
           particleCount={injection.particles.length}
           speed={injection.speed}   onSpeed={injection.setSpeed}

@@ -22,6 +22,7 @@ export default function ToroidalField() {
   const [computing, setComputing] = useState(false);
   const [fieldLines, setFieldLines] = useState([]);
   const controlsRef = useRef();
+  const cameraRef = useRef();
 
   const coils = useMemo(() => toroidalSet({ N, R0, a, n, current }), [N, R0, a, n, current]);
 
@@ -97,7 +98,7 @@ export default function ToroidalField() {
   return (
     <div className="lesson-layout">
       <div className="scene-area">
-        <Scene cameraPosition={[6, 4, 6]} controlsRef={controlsRef}>
+        <Scene cameraPosition={[6, 4, 6]} controlsRef={controlsRef} cameraRef={cameraRef}>
           {coilMeshes.map((midpoints, index) => (
             <group key={index}>
               <CoilMesh
@@ -116,7 +117,7 @@ export default function ToroidalField() {
             </group>
           ))}
           <FieldLines lines={fieldLines} colormap={colormap} lineWidth={1.5} />
-          <InjectionMarker active={injection.injectionMode} controlsRef={controlsRef} />
+          <InjectionMarker active={injection.injectionMode} />
           <ParticleTraces particles={injection.particles} />
         </Scene>
       </div>
@@ -130,7 +131,7 @@ export default function ToroidalField() {
         <InjectionPanel
           active={injection.injectionMode}
           onToggle={injection.toggleInjectionMode}
-          onInject={() => injection.injectAt(controlsRef.current?.target)}
+          onInject={() => injection.injectAt(cameraRef.current)}
           onClear={injection.clearParticles}
           particleCount={injection.particles.length}
           speed={injection.speed}   onSpeed={injection.setSpeed}

@@ -21,16 +21,12 @@ export function useParticleInjection(bFunc) {
   const toggleInjectionMode = useCallback(() => setInjectionMode(m => !m), []);
 
   /**
-   * Inject a particle at the given THREE.Vector3 (typically controlsRef.current.target).
-   * Runs synchronously — keep nsteps reasonable (<= 4000).
+   * Inject a particle at the camera's current position.
+   * Pass the THREE.Camera object (from cameraRef.current).
    */
-  const injectAt = useCallback((target) => {
-    if (!target || !bFunc) return;
-    const pos = [
-      target.x !== undefined ? target.x : target[0],
-      target.y !== undefined ? target.y : target[1],
-      target.z !== undefined ? target.z : target[2],
-    ];
+  const injectAt = useCallback((camera) => {
+    if (!camera || !bFunc) return;
+    const pos = [camera.position.x, camera.position.y, camera.position.z];
     const v0 = [
       speed * Math.sin(theta) * Math.cos(phi),
       speed * Math.cos(theta),

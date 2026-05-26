@@ -27,6 +27,7 @@ export default function HelmholtzCoils() {
   const [fieldLines, setFieldLines] = useState([]);
   const [coil2Flipped, setCoil2Flipped] = useState(false);
   const controlsRef = useRef();
+  const cameraRef = useRef();
 
   const current2 = coil2Flipped ? -current : current;
   const coil2Color = coil2Flipped ? COLOR_COIL2_FLIPPED : COLOR_COIL2_NORMAL;
@@ -107,13 +108,13 @@ export default function HelmholtzCoils() {
   return (
     <div className="lesson-layout">
       <div className="scene-area">
-        <Scene controlsRef={controlsRef}>
+        <Scene controlsRef={controlsRef} cameraRef={cameraRef}>
           <CoilMesh midpoints={coil1.midpoints} color={COLOR_COIL1} />
           <CurrentArrows midpoints={coil1.midpoints} weightedDl={coil1.weightedDl} color={COLOR_COIL1} />
           <CoilMesh midpoints={coil2.midpoints} color={coil2Color} />
           <CurrentArrows midpoints={coil2.midpoints} weightedDl={coil2.weightedDl} color={coil2Color} />
           <FieldLines lines={fieldLines} colormap={colormap} />
-          <InjectionMarker active={injection.injectionMode} controlsRef={controlsRef} />
+          <InjectionMarker active={injection.injectionMode} />
           <ParticleTraces particles={injection.particles} />
         </Scene>
       </div>
@@ -136,7 +137,7 @@ export default function HelmholtzCoils() {
         <InjectionPanel
           active={injection.injectionMode}
           onToggle={injection.toggleInjectionMode}
-          onInject={() => injection.injectAt(controlsRef.current?.target)}
+          onInject={() => injection.injectAt(cameraRef.current)}
           onClear={injection.clearParticles}
           particleCount={injection.particles.length}
           speed={injection.speed}   onSpeed={injection.setSpeed}
