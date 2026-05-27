@@ -60,7 +60,7 @@ export default function ToroidalField() {
     {
       key: 'numLines',
       label: t('controls.numFieldLines'),
-      min: 3,
+      min: 0,
       max: 10,
       step: 1,
       value: numLines,

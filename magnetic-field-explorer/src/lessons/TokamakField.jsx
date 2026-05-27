@@ -25,12 +25,13 @@ import { useParticleInjection } from '../hooks/useParticleInjection.js';
  * Direction θ̂ in Cartesian (poloidal unit vector around the minor cross-section):
  *   θ̂ = −(z/r)·ρ̂ + ((ρ−R0)/r)·ẑ
  */
-function poloidalField(x, y, z, R0, Icentral) {
+function poloidalField(x, y, z, R0, a, Icentral) {
   const rho = Math.sqrt(x * x + y * y);
   if (rho < 1e-9) return [0, 0, 0];
   const dr = rho - R0;
-  const r2 = dr * dr + z * z;
-  if (r2 < 1e-9) return [0, 0, 0];
+  // Clamp minor radius to avoid 1/r² singularity near the torus magnetic axis
+  const minR2 = (a * 0.05) ** 2;
+  const r2 = Math.max(dr * dr + z * z, minR2);
   // B_pol = Icentral / r, θ̂ = (−z·ρ̂ + dr·ẑ) / r
   // Bx = B_pol · (−z/r) · (x/rho) = −Icentral · z · x / (r² · rho)
   const scale = Icentral / r2;
@@ -54,9 +55,9 @@ export default function TokamakField() {
 
   const bFunc = useMemo(() => ([x, y, z]) => {
     const [bx, by, bz] = fieldAtPoint([x, y, z], coils.midpoints, coils.weightedDl);
-    const [px, py, pz] = poloidalField(x, y, z, R0, Icentral);
+    const [px, py, pz] = poloidalField(x, y, z, R0, a, Icentral);
     return [bx + px, by + py, bz + pz];
-  }, [coils, R0, Icentral]);
+  }, [coils, R0, a, Icentral]);
 
   const injection = useParticleInjection(bFunc);
 
@@ -83,7 +84,7 @@ export default function TokamakField() {
     { key: 'a',        label: t('controls.minorRadius'),  min: 0.2, max: 1.5, step: 0.05, value: a },
     { key: 'current',  label: t('controls.current'),      min: 0.1, max: 5,   step: 0.1,  value: current },
     { key: 'Icentral', label: t('controls.plasmaCurrent'),min: 0,   max: 3,   step: 0.05, value: Icentral },
-    { key: 'numLines', label: t('controls.numFieldLines'),min: 3,   max: 10,  step: 1,    value: numLines },
+    { key: 'numLines', label: t('controls.numFieldLines'),min: 0,   max: 10,  step: 1,    value: numLines },
     { key: 'traceLength', label: t('controls.traceLength'), min: 20, max: 300, step: 10,  value: traceLength },
   ];
 

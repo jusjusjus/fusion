@@ -37,7 +37,7 @@ export default function GradientField() {
       // Field lines are straight along z; x determines the field strength.
       const seeds = [];
       const nX = numLines;
-      const nY = Math.max(2, Math.round(numLines / 2));
+      const nY = numLines > 0 ? Math.max(2, Math.round(numLines / 2)) : 0;
       const xVals = Array.from({ length: nX }, (_, i) =>
         -2 + i * (4 / Math.max(nX - 1, 1))
       );
@@ -68,7 +68,7 @@ export default function GradientField() {
     {
       key: 'numLines',
       label: t('controls.numFieldLines'),
-      min: 2, max: 8, step: 1, value: numLines,
+      min: 0, max: 8, step: 1, value: numLines,
     },
     {
       key: 'traceLength',
