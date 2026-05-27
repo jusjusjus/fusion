@@ -5,6 +5,7 @@
     "singleLoop": "Einzelne Leiterschleife",
     "helmholtz": "Helmholtz-Spulen",
     "toroidal": "Toroidales Feld",
+    "tokamak": "Tokamak-Feld",
     "gradient": "Gradientenfeld"
   },
   "controls": {
@@ -15,7 +16,7 @@
     "minorRadius": "Kleiner Radius",
     "numFieldLines": "Feldlinien",
     "traceLength": "Spurlänge",
-    "baseField": "Basisfeld B₀",
+    "plasmaCurrent": "Plasmastrom Iₚ",
     "quadratic": "Quadratisch α (z²)",
     "quartic": "Quartisch β (z⁴)",
     "compute": "Berechnen",
@@ -43,6 +44,7 @@
     "helmholtz": "Zwei koaxiale Spulen im Abstand ihres Radius erzeugen ein bemerkenswert homogenes Feld dazwischen – die Helmholtz-Konfiguration. Häufig in Laboren eingesetzt, um das Erdmagnetfeld zu kompensieren.",
     "antiHelmholtz": "Mit umgekehrtem Strom in der unteren Spule stoßen sich die Flüsse gegenseitig ab und bilden eine Anti-Helmholtz- (Magnetspiegelkonfiguration). Das Feld ist in der Mitte null und stark an jeder Spule – nützlich zum Einfangen von Teilchen.",
     "toroidal": "N symmetrisch um einen Torus angeordnete Spulen erzeugen ein toroidales Magnetfeld. Geladene Teilchen können in dieser Geometrie eingeschlossen werden – die Grundlage von Tokamak- und Stellarator-Fusionsreaktoren.",
+    "tokamak": "Fügt dem toroidalen Spulenfeld einen zentralen Plasmastrom Iₚ hinzu. Der Strom fließt in toroidaler (φ-)Richtung; nach dem Ampèreschen Gesetz induziert er ein poloidales Feld, das sich um den kleinen Querschnitt wickelt. Zusammen erzeugen toroidale und poloidale Komponenten helikale Feldlinien – das Merkmal des Tokamak-Einschlusses. Der Rotationstransform ι (Feldlinienwindungszahl) wird durch das Verhältnis von poloidaler zu toroidaler Feldstärke bestimmt.",
     "gradient": "Ein rein analytisches Feld, bei dem Bz in x-Richtung variiert: Bz(x) = B₀ + α·x² + β·x⁴, mit Bx = By = 0. Das Feld ist divergenzfrei, da ∂Bz/∂z = 0. α > 0 konzentriert die Feldlinien nahe x = 0 (stärkeres Feld im Zentrum). α < 0 verlagert die Feldstärke zu den Rändern – ein transversaler Gradient, der in MRT und Plasmaeinschluss relevant ist.",
     "helicalSheet": "Eine radiale Linie von Startpunkten wird entlang der Feldlinien advektiert. Der Rotationstransform iota(r) ∝ r bewirkt, dass äußere Linien schneller winden und die Gerade in eine helikale Fläche verformt wird."
   },

@@ -12,6 +12,7 @@ const useStore = create((set) => ({
     singleLoop: { radius: 1, current: 1, n: 200 },
     helmholtz: { radius: 1, separation: 1, current: 1, n: 200 },
     toroidal: { N: 8, R0: 2, a: 0.6, current: 1, n: 200, numLines: 5, traceLength: 80 },
+    tokamak:  { N: 8, R0: 2, a: 0.6, current: 1, Icentral: 0, n: 200, numLines: 5, traceLength: 120 },
     gradient: { B0: 1, alpha: 0, beta: 0, numLines: 4, traceLength: 14 },
   },
 

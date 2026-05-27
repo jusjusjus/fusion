@@ -5,6 +5,7 @@
     "singleLoop": "Single Loop",
     "helmholtz": "Helmholtz Coils",
     "toroidal": "Toroidal Field",
+    "tokamak": "Tokamak Field",
     "gradient": "Gradient Field"
   },
   "controls": {
@@ -15,7 +16,7 @@
     "minorRadius": "Minor Radius",
     "numFieldLines": "Field Lines",
     "traceLength": "Trace Length",
-    "baseField": "Base field B₀",
+    "plasmaCurrent": "Plasma current Iₚ",
     "quadratic": "Quadratic α (z²)",
     "quartic": "Quartic β (z⁴)",
     "compute": "Compute",
@@ -43,6 +44,7 @@
     "helmholtz": "Two coaxial coils separated by their radius create a remarkably uniform field region between them — the Helmholtz configuration. Widely used in laboratory setups to cancel the Earth's field.",
     "antiHelmholtz": "With the lower coil's current reversed the two coils repel each other's flux, creating an anti-Helmholtz (magnetic mirror) configuration. The field is zero at the midplane and strong at each coil — useful for trapping particles.",
     "toroidal": "Arranging N coils symmetrically around a torus creates a toroidal magnetic field. Charged particles can be confined in such a geometry — the basis of tokamak and stellarator fusion reactors.",
+    "tokamak": "Adds a central plasma current Iₚ to the toroidal coil field. The current flows in the toroidal (φ) direction; by Ampère's law it induces a poloidal field that wraps around the minor cross-section. Together the toroidal and poloidal components create helical field lines — the hallmark of tokamak confinement. The rotational transform ι (field-line winding number) is set by the ratio of poloidal to toroidal field strength.",
     "gradient": "A purely analytical field where Bz varies in the x-direction: Bz(x) = B₀ + α·x² + β·x⁴, with Bx = By = 0. The field is divergence-free since ∂Bz/∂z = 0. α > 0 concentrates field lines near x = 0 (stronger field in the center). α < 0 pushes field strength to the edges — a transverse gradient relevant to MRI and plasma confinement.",
     "helicalSheet": "A radial line of starting points is advected along field lines. The rotational transform iota(r) ∝ r causes outer lines to wind faster, shearing the initial straight line into a helical sheet."
   },
