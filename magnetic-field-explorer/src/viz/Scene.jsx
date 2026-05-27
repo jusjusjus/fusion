@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, GizmoHelper, GizmoViewport } from '@react-three/drei';
@@ -40,6 +40,13 @@ export default function Scene({
   onInject,
 }) {
   const coordsRef = useRef(null);
+  const internalControlsRef = useRef(null);
+  const resolvedControlsRef = controlsRef ?? internalControlsRef;
+
+  const resetCamera = useCallback(() => {
+    // OrbitControls reset restores initial camera position + target
+    resolvedControlsRef.current?.reset();
+  }, [resolvedControlsRef]);
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -51,7 +58,7 @@ export default function Scene({
         <directionalLight position={[5, 10, 5]} intensity={0.8} />
         <pointLight position={[-5, -5, -5]} intensity={0.3} color="#6699ff" />
 
-        <OrbitControls ref={controlsRef} makeDefault enableDamping dampingFactor={0.1} enabled={!injectionMode} />
+        <OrbitControls ref={resolvedControlsRef} makeDefault enableDamping dampingFactor={0.1} enabled={!injectionMode} />
         {cameraRef && <CameraSync cameraRef={cameraRef} />}
         <CameraCoords domRef={coordsRef} />
         <FirstPersonControls active={injectionMode} onInject={onInject} />
@@ -77,6 +84,27 @@ export default function Scene({
           letterSpacing: '0.04em',
         }}
       />
+
+      <button
+        onClick={resetCamera}
+        title="Reset camera"
+        style={{
+          position: 'absolute',
+          top: 8,
+          right: 8,
+          background: 'rgba(30,40,60,0.75)',
+          border: '1px solid rgba(100,140,200,0.35)',
+          borderRadius: 6,
+          color: 'rgba(180,210,255,0.85)',
+          cursor: 'pointer',
+          fontSize: 16,
+          lineHeight: 1,
+          padding: '4px 7px',
+          userSelect: 'none',
+        }}
+      >
+        ⌂
+      </button>
     </div>
   );
 }
