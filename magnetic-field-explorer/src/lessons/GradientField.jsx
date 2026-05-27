@@ -33,17 +33,20 @@ export default function GradientField() {
 
   useEffect(() => {
     const id = setTimeout(() => {
-      // Seeds: concentric rings at z = 0, multiple radii + azimuthal angles.
-      // Slight z-offset to avoid the degenerate equatorial plane.
+      // Seeds: grid of (x, y) points at z=0.
+      // Field lines are straight along z; x determines the field strength.
       const seeds = [];
-      const radii = Array.from({ length: numLines }, (_, i) =>
-        0.15 + i * (1.6 / Math.max(numLines - 1, 1))
+      const nX = numLines;
+      const nY = Math.max(2, Math.round(numLines / 2));
+      const xVals = Array.from({ length: nX }, (_, i) =>
+        -2 + i * (4 / Math.max(nX - 1, 1))
       );
-      const nPhi = 4;
-      for (const r of radii) {
-        for (let j = 0; j < nPhi; j++) {
-          const phi = (j / nPhi) * 2 * Math.PI;
-          seeds.push(new Float32Array([r * Math.cos(phi), r * Math.sin(phi), 0.01]));
+      const yVals = Array.from({ length: nY }, (_, j) =>
+        -1 + j * (2 / Math.max(nY - 1, 1))
+      );
+      for (const x of xVals) {
+        for (const y of yVals) {
+          seeds.push(new Float32Array([x, y, 0]));
         }
       }
       const lines = traceFieldlines(seeds, bFunc, {
@@ -95,8 +98,8 @@ export default function GradientField() {
           <ResponsiveContainer width="100%" height={160}>
             <LineChart data={bzData}>
               <XAxis
-                dataKey="z"
-                label={{ value: 'z', position: 'insideBottom', offset: -4 }}
+                dataKey="x"
+                label={{ value: 'x', position: 'insideBottom', offset: -4 }}
                 tick={{ fontSize: 10 }}
               />
               <YAxis tick={{ fontSize: 10 }} />
