@@ -2,8 +2,8 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -17,7 +17,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      tagged: ${{ steps.tag.outputs.tagged }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: tag
+        run: |
+          if git describe --exact-match --match 'v*' HEAD 2>/dev/null; then
+            echo "tagged=true"  >> $GITHUB_OUTPUT
+          else
+            echo "tagged=false" >> $GITHUB_OUTPUT
+          fi
+
   build:
+    needs: check
+    if: needs.check.outputs.tagged == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -43,7 +61,8 @@ jobs:
           path: magnetic-field-explorer/dist
 
   deploy:
-    needs: build
+    needs: [check, build]
+    if: needs.check.outputs.tagged == 'true'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
