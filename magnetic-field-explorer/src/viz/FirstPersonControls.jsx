@@ -5,23 +5,29 @@ import * as THREE from 'three';
 const MOVE_SPEED = 3;    // units per second
 const LOOK_SPEED = 1.5;  // radians per second
 
-// Reusable scratch objects — never re-allocated per frame
-const _euler   = new THREE.Euler(0, 0, 0, 'YXZ');
+// Reusable scratch objects
+const _rotQuat = new THREE.Quaternion();
 const _forward = new THREE.Vector3();
 const _right   = new THREE.Vector3();
 const _worldUp = new THREE.Vector3(0, 1, 0);
-const _rollQuat = new THREE.Quaternion();
+
+// Fixed local-space unit axes.
+// camera.quaternion.multiply(q) applies q in the camera's own frame,
+// so these never need to be transformed.
+const _axisX = new THREE.Vector3(1, 0, 0); // local right  → pitch
+const _axisY = new THREE.Vector3(0, 1, 0); // local up     → yaw
+const _axisZ = new THREE.Vector3(0, 0, 1); // local back   → roll  (+Z = -view dir)
 
 /**
- * First-person camera controls — active only when `active` is true.
- * Must be rendered inside a <Canvas>.
+ * First-person / airplane camera controls.
+ * All rotations operate in the camera's local frame so pitch, yaw, and roll
+ * are fully independent regardless of current orientation.
  *
- * Controls:
- *   W / S          Move forward / backward (along camera look direction)
+ *   Arrow ↑ / ↓    Pitch up / down   (local X axis)
+ *   Arrow ← / →    Yaw  left / right (local Y axis)
+ *   Q / E          Roll left / right  (local Z axis)
+ *   W / S          Move forward / backward
  *   A / D          Strafe left / right
- *   Arrow ← / →    Yaw  (look left / right, pure world-Y rotation, no roll drift)
- *   Arrow ↑ / ↓    Pitch (look up / down, unclamped — camera can flip)
- *   Q / E          Roll  (rotate around camera's forward axis)
  *   Space          Inject particle — calls onInject(camera)
  */
 export default function FirstPersonControls({ active, onInject }) {
@@ -53,31 +59,30 @@ export default function FirstPersonControls({ active, onInject }) {
     if (!active) return;
     const k = keys.current;
 
-    // ── Yaw + Pitch (arrows) ─────────────────────────────────────────────
-    const yawDelta   = ((k['ArrowLeft']  ? 1 : 0) - (k['ArrowRight'] ? 1 : 0)) * LOOK_SPEED * dt;
-    const pitchDelta = ((k['ArrowUp']    ? 1 : 0) - (k['ArrowDown']  ? 1 : 0)) * LOOK_SPEED * dt;
-
-    if (yawDelta !== 0 || pitchDelta !== 0) {
-      // YXZ Euler: Y = world yaw, X = pitch; force Z=0 to prevent roll drift
-      _euler.setFromQuaternion(camera.quaternion, 'YXZ');
-      _euler.y += yawDelta;
-      _euler.x += pitchDelta;
-      _euler.z = 0;
-      camera.quaternion.setFromEuler(_euler);
+    // ── Pitch (Arrow ↑/↓) — local X ─────────────────────────────────
+    const pitchDelta = ((k['ArrowUp']   ? 1 : 0) - (k['ArrowDown']  ? 1 : 0)) * LOOK_SPEED * dt;
+    if (pitchDelta !== 0) {
+      _rotQuat.setFromAxisAngle(_axisX, pitchDelta);
+      camera.quaternion.multiply(_rotQuat);
     }
 
-    // ── Roll (Q/E) — rotate around camera's own forward axis ────────────
+    // ── Yaw (Arrow ←/→) — local Y ────────────────────────────────────
+    const yawDelta = ((k['ArrowLeft']  ? 1 : 0) - (k['ArrowRight'] ? 1 : 0)) * LOOK_SPEED * dt;
+    if (yawDelta !== 0) {
+      _rotQuat.setFromAxisAngle(_axisY, yawDelta);
+      camera.quaternion.multiply(_rotQuat);
+    }
+
+    // ── Roll (Q/E) — local Z (= camera back = –view direction) ───────
     const rollDelta = ((k['KeyQ'] ? 1 : 0) - (k['KeyE'] ? 1 : 0)) * LOOK_SPEED * dt;
     if (rollDelta !== 0) {
-      camera.getWorldDirection(_forward);
-      _rollQuat.setFromAxisAngle(_forward, rollDelta);
-      camera.quaternion.premultiply(_rollQuat);
+      _rotQuat.setFromAxisAngle(_axisZ, rollDelta);
+      camera.quaternion.multiply(_rotQuat);
     }
 
-    // ── Translation (WASD) ──────────────────────────────────────────────
+    // ── Translation (WASD) ────────────────────────────────────────────
     const fwd    = (k['KeyW'] ? 1 : 0) - (k['KeyS'] ? 1 : 0);
     const strafe = (k['KeyD'] ? 1 : 0) - (k['KeyA'] ? 1 : 0);
-
     if (fwd !== 0 || strafe !== 0) {
       camera.getWorldDirection(_forward);
       _right.crossVectors(_forward, _worldUp).normalize();
@@ -88,4 +93,5 @@ export default function FirstPersonControls({ active, onInject }) {
 
   return null;
 }
+
 
