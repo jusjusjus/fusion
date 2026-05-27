@@ -9,7 +9,6 @@ const LOOK_SPEED = 1.5;  // radians per second
 const _rotQuat = new THREE.Quaternion();
 const _forward = new THREE.Vector3();
 const _right   = new THREE.Vector3();
-const _worldUp = new THREE.Vector3(0, 1, 0);
 
 // Fixed local-space unit axes.
 // camera.quaternion.multiply(q) applies q in the camera's own frame,
@@ -84,8 +83,10 @@ export default function FirstPersonControls({ active, onInject }) {
     const fwd    = (k['KeyW'] ? 1 : 0) - (k['KeyS'] ? 1 : 0);
     const strafe = (k['KeyD'] ? 1 : 0) - (k['KeyA'] ? 1 : 0);
     if (fwd !== 0 || strafe !== 0) {
-      camera.getWorldDirection(_forward);
-      _right.crossVectors(_forward, _worldUp).normalize();
+      // Derive axes from the camera's actual quaternion so they stay
+      // correct after any combination of pitch, yaw, and roll.
+      _forward.set(0, 0, -1).applyQuaternion(camera.quaternion); // local -Z = view dir
+      _right.set(1, 0, 0).applyQuaternion(camera.quaternion);    // local +X = right
       camera.position.addScaledVector(_forward, fwd    * MOVE_SPEED * dt);
       camera.position.addScaledVector(_right,   strafe * MOVE_SPEED * dt);
     }
