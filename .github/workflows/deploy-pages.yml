@@ -27,8 +27,10 @@ jobs:
           fetch-depth: 0
       - id: tag
         run: |
-          if git describe --exact-match --match 'v*' HEAD 2>/dev/null; then
-            echo "tagged=true"  >> $GITHUB_OUTPUT
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tagged=true" >> $GITHUB_OUTPUT
+          elif git describe --exact-match --match 'v*' HEAD 2>/dev/null; then
+            echo "tagged=true" >> $GITHUB_OUTPUT
           else
             echo "tagged=false" >> $GITHUB_OUTPUT
           fi
