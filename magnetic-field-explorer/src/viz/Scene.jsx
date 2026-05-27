@@ -90,7 +90,7 @@ export default function Scene({
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <Canvas
         style={{ width: '100%', height: '100%' }}
-        camera={{ position: cameraPosition, fov: 50, near: 0.01, far: 500 }}
+        camera={{ position: cameraPosition, rotation: [Math.PI / 2, 0, 0], fov: 50, near: 0.01, far: 500 }}
       >
         <ambientLight intensity={0.4} />
         <directionalLight position={[5, 10, 5]} intensity={0.8} />
