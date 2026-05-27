@@ -2,6 +2,7 @@ import { useCallback, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, GizmoHelper, GizmoViewport } from '@react-three/drei';
+import * as THREE from 'three';
 import FirstPersonControls from './FirstPersonControls.jsx';
 
 /** Updates cameraRef.current with the live THREE.Camera each frame. */
@@ -23,6 +24,43 @@ function CameraCoords({ domRef }) {
       `z ${z >= 0 ? ' ' : ''}${z.toFixed(2)}`;
   });
   return null;
+}
+
+/**
+ * Subtle world-space Z gradient on the inside of a large sphere.
+ * Helps the user sense orientation (especially in FPV mode).
+ * Colors: near-black navy at z– → near-black teal at z+.
+ */
+const gradientVert = /* glsl */`
+  varying vec3 vWorldPos;
+  void main() {
+    vec4 worldPos = modelMatrix * vec4(position, 1.0);
+    vWorldPos = worldPos.xyz;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+const gradientFrag = /* glsl */`
+  varying vec3 vWorldPos;
+  void main() {
+    float t = clamp((vWorldPos.z + 30.0) / 60.0, 0.0, 1.0);
+    vec3 colNeg = vec3(0.038, 0.055, 0.102);  // dark navy  (z-)
+    vec3 colPos = vec3(0.038, 0.102, 0.120);  // dark teal  (z+)
+    gl_FragColor = vec4(mix(colNeg, colPos, t), 1.0);
+  }
+`;
+
+function GradientSky() {
+  return (
+    <mesh renderOrder={-1}>
+      <sphereGeometry args={[200, 32, 16]} />
+      <shaderMaterial
+        vertexShader={gradientVert}
+        fragmentShader={gradientFrag}
+        side={THREE.BackSide}
+        depthWrite={false}
+      />
+    </mesh>
+  );
 }
 
 /**
@@ -51,12 +89,14 @@ export default function Scene({
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <Canvas
-        style={{ width: '100%', height: '100%', background: '#0d1117' }}
+        style={{ width: '100%', height: '100%' }}
         camera={{ position: cameraPosition, fov: 50, near: 0.01, far: 500 }}
       >
         <ambientLight intensity={0.4} />
         <directionalLight position={[5, 10, 5]} intensity={0.8} />
         <pointLight position={[-5, -5, -5]} intensity={0.3} color="#6699ff" />
+
+        <GradientSky />
 
         <OrbitControls ref={resolvedControlsRef} makeDefault enableDamping dampingFactor={0.1} enabled={!injectionMode} />
         {cameraRef && <CameraSync cameraRef={cameraRef} />}
