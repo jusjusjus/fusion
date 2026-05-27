@@ -42,9 +42,9 @@ const gradientVert = /* glsl */`
 const gradientFrag = /* glsl */`
   varying vec3 vWorldPos;
   void main() {
-    float t = clamp((vWorldPos.z + 30.0) / 60.0, 0.0, 1.0);
-    vec3 colNeg = vec3(0.038, 0.055, 0.102);  // dark navy  (z-)
-    vec3 colPos = vec3(0.038, 0.102, 0.120);  // dark teal  (z+)
+    float t = clamp((vWorldPos.y + 30.0) / 60.0, 0.0, 1.0);
+    vec3 colNeg = vec3(0.038, 0.055, 0.102);  // dark navy  (below)
+    vec3 colPos = vec3(0.038, 0.102, 0.120);  // dark teal  (above)
     gl_FragColor = vec4(mix(colNeg, colPos, t), 1.0);
   }
 `;
@@ -90,7 +90,7 @@ export default function Scene({
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <Canvas
         style={{ width: '100%', height: '100%' }}
-        camera={{ position: cameraPosition, rotation: [Math.PI / 2, 0, 0], fov: 50, near: 0.01, far: 500 }}
+        camera={{ position: cameraPosition, fov: 50, near: 0.01, far: 500 }}
       >
         <ambientLight intensity={0.4} />
         <directionalLight position={[5, 10, 5]} intensity={0.8} />
