@@ -7,11 +7,13 @@ import LanguageToggle from './components/LanguageToggle';
 import SingleLoop from './lessons/SingleLoop';
 import HelmholtzCoils from './lessons/HelmholtzCoils';
 import ToroidalField from './lessons/ToroidalField';
+import GradientField from './lessons/GradientField';
 
 const LESSONS = {
   singleLoop: SingleLoop,
   helmholtz: HelmholtzCoils,
   toroidal: ToroidalField,
+  gradient: GradientField,
 };
 
 export default function App() {

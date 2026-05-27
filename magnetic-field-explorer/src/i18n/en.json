@@ -4,7 +4,8 @@
   "lessons": {
     "singleLoop": "Single Loop",
     "helmholtz": "Helmholtz Coils",
-    "toroidal": "Toroidal Field"
+    "toroidal": "Toroidal Field",
+    "gradient": "Gradient Field"
   },
   "controls": {
     "radius": "Radius",
@@ -14,6 +15,9 @@
     "minorRadius": "Minor Radius",
     "numFieldLines": "Field Lines",
     "traceLength": "Trace Length",
+    "baseField": "Base field B₀",
+    "quadratic": "Quadratic α (z²)",
+    "quartic": "Quartic β (z⁴)",
     "compute": "Compute",
     "reset": "Reset"
   },
@@ -39,10 +43,12 @@
     "helmholtz": "Two coaxial coils separated by their radius create a remarkably uniform field region between them — the Helmholtz configuration. Widely used in laboratory setups to cancel the Earth's field.",
     "antiHelmholtz": "With the lower coil's current reversed the two coils repel each other's flux, creating an anti-Helmholtz (magnetic mirror) configuration. The field is zero at the midplane and strong at each coil — useful for trapping particles.",
     "toroidal": "Arranging N coils symmetrically around a torus creates a toroidal magnetic field. Charged particles can be confined in such a geometry — the basis of tokamak and stellarator fusion reactors.",
+    "gradient": "A purely analytical field Bz(z) = B₀ + α·z² + β·z⁴ with divergence-free transverse corrections. α > 0 creates a magnetic mirror (field lines converge at the ends). α < 0 with β > 0 creates a saddle / double-well — the field has a local maximum at z = 0 and minima at z = ±√(−α/2β), which can trap or reflect particles.",
     "helicalSheet": "A radial line of starting points is advected along field lines. The rotational transform iota(r) ∝ r causes outer lines to wind faster, shearing the initial straight line into a helical sheet."
   },
   "charts": {
     "bzOnAxis": "Bz on axis",
+    "bzProfile": "Bz(z) profile",
     "axialPosition": "z / a",
     "fieldStrength": "Bz (a.u.)"
   },

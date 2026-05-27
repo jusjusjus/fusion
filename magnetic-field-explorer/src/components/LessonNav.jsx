@@ -5,6 +5,7 @@ const LESSONS = [
   { id: 'singleLoop', icon: '⭕' },
   { id: 'helmholtz', icon: '🔵' },
   { id: 'toroidal', icon: '🍩' },
+  { id: 'gradient', icon: '∇' },
 ];
 
 export default function LessonNav() {

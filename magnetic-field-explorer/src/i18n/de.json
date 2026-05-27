@@ -4,7 +4,8 @@
   "lessons": {
     "singleLoop": "Einzelne Leiterschleife",
     "helmholtz": "Helmholtz-Spulen",
-    "toroidal": "Toroidales Feld"
+    "toroidal": "Toroidales Feld",
+    "gradient": "Gradientenfeld"
   },
   "controls": {
     "radius": "Radius",
@@ -14,6 +15,9 @@
     "minorRadius": "Kleiner Radius",
     "numFieldLines": "Feldlinien",
     "traceLength": "Spurlänge",
+    "baseField": "Basisfeld B₀",
+    "quadratic": "Quadratisch α (z²)",
+    "quartic": "Quartisch β (z⁴)",
     "compute": "Berechnen",
     "reset": "Zurücksetzen"
   },
@@ -39,10 +43,12 @@
     "helmholtz": "Zwei koaxiale Spulen im Abstand ihres Radius erzeugen ein bemerkenswert homogenes Feld dazwischen – die Helmholtz-Konfiguration. Häufig in Laboren eingesetzt, um das Erdmagnetfeld zu kompensieren.",
     "antiHelmholtz": "Mit umgekehrtem Strom in der unteren Spule stoßen sich die Flüsse gegenseitig ab und bilden eine Anti-Helmholtz- (Magnetspiegelkonfiguration). Das Feld ist in der Mitte null und stark an jeder Spule – nützlich zum Einfangen von Teilchen.",
     "toroidal": "N symmetrisch um einen Torus angeordnete Spulen erzeugen ein toroidales Magnetfeld. Geladene Teilchen können in dieser Geometrie eingeschlossen werden – die Grundlage von Tokamak- und Stellarator-Fusionsreaktoren.",
+    "gradient": "Ein rein analytisches Feld Bz(z) = B₀ + α·z² + β·z⁴ mit divergenzfreien transversalen Korrekturen. α > 0 erzeugt einen Magnetspiegel (Feldlinien konvergieren an den Enden). α < 0 mit β > 0 erzeugt einen Sattel/Doppelminimum – das Feld hat ein lokales Maximum bei z = 0 und Minima bei z = ±√(−α/2β), was Teilchen reflektieren oder einfangen kann.",
     "helicalSheet": "Eine radiale Linie von Startpunkten wird entlang der Feldlinien advektiert. Der Rotationstransform iota(r) ∝ r bewirkt, dass äußere Linien schneller winden und die Gerade in eine helikale Fläche verformt wird."
   },
   "charts": {
     "bzOnAxis": "Bz auf der Achse",
+    "bzProfile": "Bz(z)-Profil",
     "axialPosition": "z / a",
     "fieldStrength": "Bz (willk. Einh.)"
   },
