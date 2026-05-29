@@ -57,12 +57,22 @@ export default function InjectionPanel({
               </div>
             </div>
 
-            {/* Energy slider (log scale: 1 eV – 10 keV) */}
-            <LogEnergySlider
-              label={t('injection.energy')}
-              value={energyEV}
-              onChange={onEnergyEV}
-            />
+            {/* Energy input */}
+            <div className="control-row">
+              <label>{t('injection.energy')}</label>
+              <input
+                type="number"
+                min={1e-6}
+                step="any"
+                value={energyEV}
+                onChange={e => {
+                  const v = parseFloat(e.target.value);
+                  if (!isNaN(v) && v > 0) onEnergyEV(v);
+                }}
+                className="number-input"
+              />
+              <span className="control-hint">eV — thermal: 0.016 · keV–MeV for visible orbits</span>
+            </div>
           </div>
 
           <div className="injection-actions">
@@ -83,26 +93,4 @@ export default function InjectionPanel({
   );
 }
 
-/** Logarithmic energy slider: slider range 0–40 maps to 1–10000 eV (10^0 – 10^4). */
-function LogEnergySlider({ label, value, onChange }) {
-  const logVal = Math.log10(Math.max(value, 1)) * 10;
-  const display = value < 1000
-    ? `${Math.round(value)} eV`
-    : `${(value / 1000).toFixed(2)} keV`;
-
-  return (
-    <div className="control-row">
-      <label>
-        {label}
-        <span className="control-value">{display}</span>
-      </label>
-      <input
-        type="range"
-        min={0} max={40} step={0.5}
-        value={logVal}
-        onChange={e => onChange(Math.pow(10, parseFloat(e.target.value) / 10))}
-      />
-    </div>
-  );
-}
 

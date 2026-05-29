@@ -8,8 +8,8 @@ import * as THREE from 'three';
  * current: current in amperes — tube radius scales as baseRadius * sqrt(|current|)
  * radius: base tube radius at 1 A (metres)
  */
-export default function CoilMesh({ midpoints, color = '#ffaa00', radius = 0.003, current = 1 }) {
-  const tubeRadius = radius * Math.sqrt(Math.abs(current));
+export default function CoilMesh({ midpoints, color = '#ffaa00', radius = 0.003, current = 1, maxRadius = Infinity }) {
+  const tubeRadius = Math.min(radius * Math.sqrt(Math.abs(current)), maxRadius);
   const geometry = useMemo(() => {
     const N = midpoints.length / 3;
     const points = [];

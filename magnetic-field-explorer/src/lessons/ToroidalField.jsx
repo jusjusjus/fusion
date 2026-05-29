@@ -10,6 +10,7 @@ import ParticleTraces from '../viz/ParticleTraces.jsx';
 import ControlPanel from '../components/ControlPanel.jsx';
 import InjectionPanel from '../components/InjectionPanel.jsx';
 import useStore from '../store/useStore.js';
+import { ITER_TOROIDAL } from '../store/useStore.js';
 import { toroidalSet } from '../physics/coils.js';
 import { fieldAtPoint } from '../physics/biotSavart.js';
 import { traceFieldlines } from '../physics/fieldlines.js';
@@ -17,7 +18,7 @@ import { useParticleInjection } from '../hooks/useParticleInjection.js';
 
 export default function ToroidalField() {
   const { t } = useTranslation();
-  const { params, setParam } = useStore();
+  const { params, setParam, setParams, resetParams } = useStore();
   const { N, R0, a, current, n, numLines, traceLength } = params.toroidal;
   const [computing, setComputing] = useState(false);
   const [fieldLines, setFieldLines] = useState([]);
@@ -53,28 +54,12 @@ export default function ToroidalField() {
   const colormap = (value) => new THREE.Color().setHSL(0.55 + value * 0.15, 0.9, 0.5);
 
   const controls = [
-    { key: 'N',        label: t('controls.numCoils'),     min: 4,    max: 32,   step: 1,    decimals: 0, value: N },
-    { key: 'R0',       label: t('controls.radius'),       min: 0.10, max: 5.00, step: 0.05, decimals: 2, value: R0 },
-    { key: 'a',        label: t('controls.minorRadius'),  min: 0.02, max: 1.50, step: 0.02, decimals: 2, value: a },
-    { key: 'current',  label: t('controls.current'),      min: 1,    max: 200,  step: 1,    decimals: 0, value: current },
-    {
-      key: 'numLines',
-      label: t('controls.numFieldLines'),
-      min: 0,
-      max: 10,
-      step: 1,
-      decimals: 0,
-      value: numLines,
-    },
-    {
-      key: 'traceLength',
-      label: t('controls.traceLength'),
-      min: 2,
-      max: 20,
-      step: 1,
-      decimals: 0,
-      value: traceLength,
-    },
+    { key: 'N',          label: t('controls.numCoils'),    step: 1,       value: N,       hint: '4 – 32' },
+    { key: 'R0',         label: t('controls.radius'),      step: 0.1,     value: R0,      hint: 'm  (ITER: 6.2)' },
+    { key: 'a',          label: t('controls.minorRadius'), step: 0.05,    value: a,       hint: 'm  (ITER: 2.0)' },
+    { key: 'current',    label: t('controls.current'),     step: 1000,    value: current, hint: 'A  (ITER: ~9 MA)' },
+    { key: 'numLines',   label: t('controls.numFieldLines'), step: 1,     value: numLines, hint: '0 – 10' },
+    { key: 'traceLength',label: t('controls.traceLength'), step: 1,       value: traceLength, hint: 'field-line wraps' },
   ];
 
   const coilMeshes = useMemo(() => {
@@ -109,6 +94,7 @@ export default function ToroidalField() {
                 midpoints={midpoints}
                 color={`hsl(${180 + index * 15}, 80%, 60%)`}
                 current={current}
+                maxRadius={a * 0.05}
               />
               <CurrentArrows
                 midpoints={midpoints}
@@ -129,7 +115,13 @@ export default function ToroidalField() {
         <ControlPanel
           controls={controls}
           onChange={(key, value) => setParam('toroidal', key, value)}
+          onReset={() => resetParams('toroidal')}
           computing={computing}
+          extraButtons={
+            <button className="preset-btn" onClick={() => setParams('toroidal', ITER_TOROIDAL)}>
+              ITER preset
+            </button>
+          }
         />
         <p className="info-text">{computing ? t('info.computing') : t('info.done')}</p>
         <InjectionPanel

@@ -14,8 +14,8 @@ const _dir = new THREE.Vector3();
  *
  * Species and energy (eV) determine the velocity magnitude using the
  * non-relativistic relation v = sqrt(2 KE / m).  The Boris timestep is
- * auto-scaled to 1/200 of the cyclotron period at the injection point,
- * and 10 complete orbits are traced (capped at 5000 steps).
+ * auto-scaled to 1/100 of the Larmor orbit at the injection point (r_c / 100 / v),
+ * and 200 complete orbits are traced (or at least 100 m), capped at 100 000 steps.
  */
 export function useParticleInjection(bFunc) {
   const [injectionMode, setInjectionMode] = useState(false);
@@ -42,13 +42,18 @@ export function useParticleInjection(bFunc) {
     camera.getWorldDirection(_dir);
     const v0 = [_dir.x * speed, _dir.y * speed, _dir.z * speed];
 
-    // Fix spatial step to 1 mm regardless of speed or local B strength.
-    // This guarantees smooth trajectories and avoids the huge-dt problem when
-    // B ≈ 0 at the injection point (weak B → large T_c → enormous time steps).
-    const STEP_M   = 1e-3;                               // 1 mm spatial step
-    const TRACE_M  = 5.0;                                // 5 m total path
-    const dt       = STEP_M / speed;                     // s per step
-    const nsteps   = Math.ceil(TRACE_M / STEP_M);        // 5000
+    // Adaptive step: resolve ~100 steps per Larmor orbit.
+    // r_c = m·v / (|q|·|B|) at the injection point.
+    const B0 = bFunc(pos);
+    const Bmag = Math.sqrt(B0[0]**2 + B0[1]**2 + B0[2]**2);
+    const r_c = Bmag > 1e-10
+      ? mass_kg * speed / (Math.abs(charge) * Bmag)
+      : 1.0;                                              // fallback 1m if B≈0
+
+    const STEP_M  = Math.min(Math.max(r_c / 100, 5e-4), 0.5);   // 0.5mm – 50cm
+    const TRACE_M = Math.max(200 * r_c, 100);                    // 200 orbits or 100m
+    const dt      = STEP_M / speed;
+    const nsteps  = Math.min(Math.ceil(TRACE_M / STEP_M), 100000);
 
     const result = traceParticle(pos, v0, charge, mass_kg, bFunc, { dt, nsteps });
     setParticles(prev => [...prev, result.positions]);

@@ -9,7 +9,7 @@ import InjectionMarker from '../viz/InjectionMarker.jsx';
 import ParticleTraces from '../viz/ParticleTraces.jsx';
 import ControlPanel from '../components/ControlPanel.jsx';
 import InjectionPanel from '../components/InjectionPanel.jsx';
-import useStore from '../store/useStore.js';
+import useStore, { ITER_TOKAMAK } from '../store/useStore.js';
 import { toroidalSet } from '../physics/coils.js';
 import { fieldAtPoint } from '../physics/biotSavart.js';
 import { traceFieldlines } from '../physics/fieldlines.js';
@@ -44,12 +44,14 @@ function poloidalField(x, y, z, R0, a, Icentral) {
 
 export default function TokamakField() {
   const { t } = useTranslation();
-  const { params, setParam } = useStore();
+  const { params, setParam, setParams, resetParams } = useStore();
   const { N, R0, a, current, Icentral, n, numLines, traceLength } = params.tokamak;
   const [computing, setComputing] = useState(false);
   const [fieldLines, setFieldLines] = useState([]);
   const controlsRef = useRef();
   const cameraRef = useRef();
+
+  const [showHaze, setShowHaze] = useState(true);
 
   const coils = useMemo(() => toroidalSet({ N, R0, a, n, current }), [N, R0, a, n, current]);
 
@@ -79,13 +81,13 @@ export default function TokamakField() {
   const colormap = (value) => new THREE.Color().setHSL(0.55 + value * 0.15, 0.9, 0.5);
 
   const controls = [
-    { key: 'N',        label: t('controls.numCoils'),     min: 4,    max: 32,   step: 1,    decimals: 0, value: N },
-    { key: 'R0',       label: t('controls.radius'),       min: 0.10, max: 5.00, step: 0.05, decimals: 2, value: R0 },
-    { key: 'a',        label: t('controls.minorRadius'),  min: 0.02, max: 1.50, step: 0.02, decimals: 2, value: a },
-    { key: 'current',  label: t('controls.current'),      min: 1,    max: 200,  step: 1,    decimals: 0, value: current },
-    { key: 'Icentral', label: t('controls.plasmaCurrent'),min: 0,    max: 5000, step: 50,   decimals: 0, value: Icentral },
-    { key: 'numLines', label: t('controls.numFieldLines'),min: 0,    max: 10,   step: 1,    decimals: 0, value: numLines },
-    { key: 'traceLength', label: t('controls.traceLength'), min: 2,  max: 30,   step: 1,    decimals: 0, value: traceLength },
+    { key: 'N',          label: t('controls.numCoils'),     step: 1,    value: N,          hint: '4 – 32' },
+    { key: 'R0',         label: t('controls.radius'),       step: 0.1,  value: R0,         hint: 'm  (ITER: 6.2)' },
+    { key: 'a',          label: t('controls.minorRadius'),  step: 0.05, value: a,          hint: 'm  (ITER: 2.0)' },
+    { key: 'current',    label: t('controls.current'),      step: 1000, value: current,    hint: 'A  (ITER: ~9 MA)' },
+    { key: 'Icentral',   label: t('controls.plasmaCurrent'),step: 50000,value: Icentral,   hint: 'A  plasma toroidal current (ITER: ~15 MA)' },
+    { key: 'numLines',   label: t('controls.numFieldLines'),step: 1,    value: numLines,   hint: '0 – 10' },
+    { key: 'traceLength',label: t('controls.traceLength'),  step: 1,    value: traceLength,hint: 'field-line wraps' },
   ];
 
   const coilMeshes = useMemo(() => {
@@ -108,7 +110,7 @@ export default function TokamakField() {
                onInject={(cam) => injection.injectAt(cam)}>
           {coilMeshes.map((mp, i) => (
             <group key={i}>
-              <CoilMesh midpoints={mp} color={`hsl(${200 + i * 15}, 80%, 60%)`} current={current} />
+              <CoilMesh midpoints={mp} color={`hsl(${200 + i * 15}, 80%, 60%)`} current={current} maxRadius={a * 0.05} />
               <CurrentArrows
                 midpoints={mp} weightedDl={coilWeightedDls[i]}
                 color={`hsl(${200 + i * 15}, 80%, 60%)`}
@@ -117,6 +119,18 @@ export default function TokamakField() {
             </group>
           ))}
           <FieldLines lines={fieldLines} colormap={colormap} lineWidth={1.5} />
+          {showHaze && Icentral > 0 && (
+            <mesh>
+              <torusGeometry args={[R0, a * 0.95, 16, 60]} />
+              <meshStandardMaterial
+                color="#ff6600"
+                transparent
+                opacity={Math.min(0.35, (Math.abs(Icentral) / Math.max(Math.abs(current), 1)) * 0.35)}
+                depthWrite={false}
+                side={THREE.DoubleSide}
+              />
+            </mesh>
+          )}
           <ParticleTraces particles={injection.particles} />
         </Scene>
         <InjectionMarker active={injection.injectionMode} />
@@ -125,8 +139,18 @@ export default function TokamakField() {
         <ControlPanel
           controls={controls}
           onChange={(key, value) => setParam('tokamak', key, value)}
+          onReset={() => resetParams('tokamak')}
           computing={computing}
+          extraButtons={
+            <button className="preset-btn" onClick={() => setParams('tokamak', ITER_TOKAMAK)}>
+              ITER preset
+            </button>
+          }
         />
+        <label className="toggle-row">
+          <input type="checkbox" checked={showHaze} onChange={e => setShowHaze(e.target.checked)} />
+          <span>Plasma haze</span>
+        </label>
         <p className="info-text">{computing ? t('info.computing') : t('info.done')}</p>
         <InjectionPanel
           active={injection.injectionMode}
