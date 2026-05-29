@@ -8,11 +8,11 @@
 export default function ControlPanel({ controls = [], onChange, onCompute, computing = false, children }) {
   return (
     <aside className="control-panel">
-      {controls.map(({ key, label, type = 'range', min = 0, max = 10, step = 0.1, value }) => (
+      {controls.map(({ key, label, type = 'range', min = 0, max = 10, step = 0.1, value, decimals = 2 }) => (
         <div key={key} className="control-row">
           <label>
             {label}
-            <span className="control-value">{typeof value === 'number' ? value.toFixed(2) : value}</span>
+            <span className="control-value">{typeof value === 'number' ? value.toFixed(decimals) : value}</span>
           </label>
           {type === 'range' ? (
             <input

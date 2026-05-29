@@ -1,17 +1,17 @@
 import { useTranslation } from 'react-i18next';
+import { PARTICLES } from '../physics/particles.js';
 
 /**
  * Sidebar panel for particle injection mode.
  *
  * Props:
- *   active           bool      - whether injection mode is on
- *   onToggle         fn        - toggle injection mode
- *   onInject         fn        - inject particle from camera viewpoint
- *   onClear          fn        - clear all traces
- *   particleCount    number    - how many traces exist
- *   speed / onSpeed  value+setter
- *   charge/onCharge  value+setter
- *   mass  / onMass   value+setter
+ *   active              bool      - whether injection mode is on
+ *   onToggle            fn        - toggle injection mode
+ *   onInject            fn        - inject particle from camera viewpoint
+ *   onClear             fn        - clear all traces
+ *   particleCount       number    - how many traces exist
+ *   speciesId/onSpeciesId  value+setter  - particle species key
+ *   energyEV/onEnergyEV    value+setter  - kinetic energy in eV
  */
 export default function InjectionPanel({
   active,
@@ -19,9 +19,8 @@ export default function InjectionPanel({
   onInject,
   onClear,
   particleCount = 0,
-  speed,  onSpeed,
-  charge, onCharge,
-  mass,   onMass,
+  speciesId, onSpeciesId,
+  energyEV,  onEnergyEV,
 }) {
   const { t } = useTranslation();
 
@@ -42,9 +41,28 @@ export default function InjectionPanel({
           <p className="injection-hint">{t('injection.hint')}</p>
 
           <div className="injection-controls">
-            <SliderRow label={t('injection.speed')} value={speed} min={0.1} max={5} step={0.1} onChange={onSpeed} />
-            <SliderRow label={t('injection.charge')} value={charge} min={0.1} max={5} step={0.1} onChange={onCharge} />
-            <SliderRow label={t('injection.mass')}   value={mass}   min={0.1} max={5} step={0.1} onChange={onMass} />
+            {/* Species selector */}
+            <div className="control-row">
+              <label>{t('injection.species')}</label>
+              <div className="species-buttons">
+                {PARTICLES.map(p => (
+                  <button
+                    key={p.id}
+                    className={`species-btn${speciesId === p.id ? ' active' : ''}`}
+                    onClick={() => onSpeciesId(p.id)}
+                  >
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Energy slider (log scale: 1 eV – 10 keV) */}
+            <LogEnergySlider
+              label={t('injection.energy')}
+              value={energyEV}
+              onChange={onEnergyEV}
+            />
           </div>
 
           <div className="injection-actions">
@@ -65,21 +83,26 @@ export default function InjectionPanel({
   );
 }
 
-function SliderRow({ label, value, min, max, step, onChange }) {
+/** Logarithmic energy slider: slider range 0–40 maps to 1–10000 eV (10^0 – 10^4). */
+function LogEnergySlider({ label, value, onChange }) {
+  const logVal = Math.log10(Math.max(value, 1)) * 10;
+  const display = value < 1000
+    ? `${Math.round(value)} eV`
+    : `${(value / 1000).toFixed(2)} keV`;
+
   return (
     <div className="control-row">
       <label>
         {label}
-        <span className="control-value">{+value.toFixed(2)}</span>
+        <span className="control-value">{display}</span>
       </label>
       <input
         type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={e => onChange(parseFloat(e.target.value))}
+        min={0} max={40} step={0.5}
+        value={logVal}
+        onChange={e => onChange(Math.pow(10, parseFloat(e.target.value) / 10))}
       />
     </div>
   );
 }
+

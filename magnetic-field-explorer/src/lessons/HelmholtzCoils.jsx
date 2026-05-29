@@ -89,16 +89,17 @@ export default function HelmholtzCoils() {
   const colormap = (value) => new THREE.Color().setHSL(0.55 - value * 0.3, 1, 0.55);
 
   const controls = [
-    { key: 'radius', label: t('controls.radius'), min: 0.5, max: 3, step: 0.1, value: radius },
+    { key: 'radius',     label: t('controls.radius'),     min: 0.05, max: 0.5,  step: 0.01, decimals: 2, value: radius },
     {
       key: 'separation',
       label: t('controls.separation'),
-      min: 0.2,
-      max: 4,
-      step: 0.1,
+      min: 0.02,
+      max: 0.5,
+      step: 0.01,
+      decimals: 2,
       value: separation,
     },
-    { key: 'current', label: t('controls.current'), min: 0.1, max: 5, step: 0.1, value: current },
+    { key: 'current', label: t('controls.current'), min: 0.1, max: 10.0, step: 0.1, decimals: 1, value: current },
   ];
 
   const configLabel = coil2Flipped
@@ -108,12 +109,12 @@ export default function HelmholtzCoils() {
   return (
     <div className="lesson-layout">
       <div className="scene-area">
-        <Scene controlsRef={controlsRef} cameraRef={cameraRef}
+        <Scene cameraPosition={[0.5, 0.4, 0.5]} controlsRef={controlsRef} cameraRef={cameraRef}
                injectionMode={injection.injectionMode}
                onInject={(cam) => injection.injectAt(cam)}>
-          <CoilMesh midpoints={coil1.midpoints} color={COLOR_COIL1} />
+          <CoilMesh midpoints={coil1.midpoints} color={COLOR_COIL1} current={current} />
           <CurrentArrows midpoints={coil1.midpoints} weightedDl={coil1.weightedDl} color={COLOR_COIL1} />
-          <CoilMesh midpoints={coil2.midpoints} color={coil2Color} />
+          <CoilMesh midpoints={coil2.midpoints} color={coil2Color} current={current2} />
           <CurrentArrows midpoints={coil2.midpoints} weightedDl={coil2.weightedDl} color={coil2Color} />
           <FieldLines lines={fieldLines} colormap={colormap} />
           <ParticleTraces particles={injection.particles} />
@@ -142,9 +143,8 @@ export default function HelmholtzCoils() {
           onInject={() => injection.injectAt(cameraRef.current)}
           onClear={injection.clearParticles}
           particleCount={injection.particles.length}
-          speed={injection.speed}   onSpeed={injection.setSpeed}
-          charge={injection.charge} onCharge={injection.setCharge}
-          mass={injection.mass}     onMass={injection.setMass}
+          speciesId={injection.speciesId} onSpeciesId={injection.setSpeciesId}
+          energyEV={injection.energyEV}   onEnergyEV={injection.setEnergyEV}
         />
         <p className="description">
           {coil2Flipped ? t('descriptions.antiHelmholtz') : t('descriptions.helmholtz')}

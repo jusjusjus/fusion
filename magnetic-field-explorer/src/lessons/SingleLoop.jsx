@@ -41,7 +41,7 @@ export default function SingleLoop() {
 
       const seeds = [];
       // 7 radii (inner + outer), 3 azimuthal angles — 21 field lines total.
-      // z-offset avoids the coil plane's degenerate on-plane seeds.
+      // z-offset (2% of radius) avoids the coil plane's degenerate on-plane seeds.
       const radii = [0.12, 0.28, 0.48, 0.70, 0.92, 1.25, 1.65];
       const phis = [0, (2 * Math.PI) / 3, (4 * Math.PI) / 3];
       for (const r of radii) {
@@ -50,7 +50,7 @@ export default function SingleLoop() {
             new Float32Array([
               radius * r * Math.cos(phi),
               radius * r * Math.sin(phi),
-              0.02,
+              radius * 0.02,
             ])
           );
         }
@@ -63,7 +63,7 @@ export default function SingleLoop() {
       for (let i = 0; i < 30; i += 1) {
         const z = -3 * radius + (6 * radius * i) / 29;
         const B = bFunc([0, 0, z]);
-        data.push({ z: +(z / radius).toFixed(2), Bz: +B[2].toFixed(4) });
+        data.push({ z: +(z / radius).toFixed(2), Bz: +(B[2] * 1e6).toFixed(4) });
       }
       setBzData(data);
       setComputing(false);
@@ -75,17 +75,17 @@ export default function SingleLoop() {
   const colormap = (value) => new THREE.Color().setHSL(0.6 - value * 0.4, 1, 0.5);
 
   const controls = [
-    { key: 'radius', label: t('controls.radius'), min: 0.2, max: 3, step: 0.1, value: radius },
-    { key: 'current', label: t('controls.current'), min: 0.1, max: 5, step: 0.1, value: current },
+    { key: 'radius',  label: t('controls.radius'),  min: 0.02, max: 0.5,  step: 0.01, decimals: 2, value: radius },
+    { key: 'current', label: t('controls.current'), min: 0.1,  max: 10.0, step: 0.1,  decimals: 1, value: current },
   ];
 
   return (
     <div className="lesson-layout">
       <div className="scene-area">
-        <Scene controlsRef={controlsRef} cameraRef={cameraRef}
+        <Scene cameraPosition={[0.5, 0.4, 0.5]} controlsRef={controlsRef} cameraRef={cameraRef}
                injectionMode={injection.injectionMode}
                onInject={(cam) => injection.injectAt(cam)}>
-          <CoilMesh midpoints={coil.midpoints} color="#ffaa00" />
+          <CoilMesh midpoints={coil.midpoints} color="#ffaa00" current={current} />
           <CurrentArrows midpoints={coil.midpoints} weightedDl={coil.weightedDl} color="#ffaa00" />
           <FieldLines lines={fieldLines} colormap={colormap} />
           <ParticleTraces particles={injection.particles} />
@@ -108,7 +108,7 @@ export default function SingleLoop() {
                 label={{ value: t('charts.axialPosition'), position: 'insideBottom', offset: -5 }}
               />
               <YAxis />
-              <Tooltip />
+              <Tooltip formatter={(v) => `${(+v).toFixed(3)} μT`} />
               <Line type="monotone" dataKey="Bz" stroke="#44aaff" dot={false} />
             </LineChart>
           </ResponsiveContainer>
@@ -119,9 +119,8 @@ export default function SingleLoop() {
           onInject={() => injection.injectAt(cameraRef.current)}
           onClear={injection.clearParticles}
           particleCount={injection.particles.length}
-          speed={injection.speed}   onSpeed={injection.setSpeed}
-          charge={injection.charge} onCharge={injection.setCharge}
-          mass={injection.mass}     onMass={injection.setMass}
+          speciesId={injection.speciesId} onSpeciesId={injection.setSpeciesId}
+          energyEV={injection.energyEV}   onEnergyEV={injection.setEnergyEV}
         />
         <p className="description">{t('descriptions.singleLoop')}</p>
       </div>

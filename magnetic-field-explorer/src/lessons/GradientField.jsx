@@ -25,24 +25,24 @@ export default function GradientField() {
 
   const injection = useParticleInjection(bFunc);
 
-  // Bz profile for chart (recomputed immediately, no async needed)
+  // Bz(x) for chart: scale to mT for display
   const bzData = useMemo(
-    () => sampleBzProfile({ B0, alpha, beta }),
+    () => sampleBzProfile({ B0, alpha, beta }).map(d => ({ ...d, Bz: +(d.Bz * 1e3).toFixed(4) })),
     [B0, alpha, beta]
   );
 
   useEffect(() => {
     const id = setTimeout(() => {
       // Seeds: grid of (x, y) points at z=0.
-      // Field lines are straight along z; x determines the field strength.
+      // Field lines run along z; x determines the field strength.
       const seeds = [];
       const nX = numLines;
       const nY = numLines > 0 ? Math.max(2, Math.round(numLines / 2)) : 0;
       const xVals = Array.from({ length: nX }, (_, i) =>
-        -2 + i * (4 / Math.max(nX - 1, 1))
+        -0.2 + i * (0.4 / Math.max(nX - 1, 1))
       );
       const yVals = Array.from({ length: nY }, (_, j) =>
-        -1 + j * (2 / Math.max(nY - 1, 1))
+        -0.05 + j * (0.1 / Math.max(nY - 1, 1))
       );
       for (const x of xVals) {
         for (const y of yVals) {
@@ -62,25 +62,25 @@ export default function GradientField() {
   const colormap = (value) => new THREE.Color().setHSL(0.65 - value * 0.5, 1, 0.5);
 
   const controls = [
-    { key: 'B0',    label: t('controls.baseField'),  min: 0.1, max: 5,  step: 0.1,  value: B0 },
-    { key: 'alpha', label: t('controls.quadratic'),  min: -3,  max: 3,  step: 0.05, value: alpha },
-    { key: 'beta',  label: t('controls.quartic'),    min: -1,  max: 1,  step: 0.01, value: beta },
+    { key: 'B0',    label: t('controls.baseField'),  min: 0.0001, max: 0.01, step: 0.0001, decimals: 4, value: B0 },
+    { key: 'alpha', label: t('controls.quadratic'),  min: -0.1,   max: 0.1,  step: 0.005,  decimals: 3, value: alpha },
+    { key: 'beta',  label: t('controls.quartic'),    min: -0.5,   max: 0.5,  step: 0.01,   decimals: 2, value: beta },
     {
       key: 'numLines',
       label: t('controls.numFieldLines'),
-      min: 0, max: 8, step: 1, value: numLines,
+      min: 0, max: 8, step: 1, decimals: 0, value: numLines,
     },
     {
       key: 'traceLength',
       label: t('controls.traceLength'),
-      min: 5, max: 40, step: 1, value: traceLength,
+      min: 0.2, max: 2, step: 0.1, decimals: 1, value: traceLength,
     },
   ];
 
   return (
     <div className="lesson-layout">
       <div className="scene-area">
-        <Scene cameraPosition={[0, 3, 8]} controlsRef={controlsRef} cameraRef={cameraRef}
+        <Scene cameraPosition={[0.3, 0.3, 0.5]} controlsRef={controlsRef} cameraRef={cameraRef}
                injectionMode={injection.injectionMode}
                onInject={(cam) => injection.injectAt(cam)}>
           <FieldLines lines={fieldLines} colormap={colormap} />
@@ -99,11 +99,11 @@ export default function GradientField() {
             <LineChart data={bzData}>
               <XAxis
                 dataKey="x"
-                label={{ value: 'x', position: 'insideBottom', offset: -4 }}
+                label={{ value: 'x (m)', position: 'insideBottom', offset: -4 }}
                 tick={{ fontSize: 10 }}
               />
               <YAxis tick={{ fontSize: 10 }} />
-              <Tooltip formatter={(v) => v.toFixed(3)} />
+              <Tooltip formatter={(v) => `${v.toFixed(4)} mT`} />
               <ReferenceLine y={0} stroke="rgba(255,255,255,0.2)" />
               <Line type="monotone" dataKey="Bz" stroke="#44aaff" dot={false} strokeWidth={2} />
             </LineChart>
@@ -115,9 +115,8 @@ export default function GradientField() {
           onInject={() => injection.injectAt(cameraRef.current)}
           onClear={injection.clearParticles}
           particleCount={injection.particles.length}
-          speed={injection.speed}   onSpeed={injection.setSpeed}
-          charge={injection.charge} onCharge={injection.setCharge}
-          mass={injection.mass}     onMass={injection.setMass}
+          speciesId={injection.speciesId} onSpeciesId={injection.setSpeciesId}
+          energyEV={injection.energyEV}   onEnergyEV={injection.setEnergyEV}
         />
         <p className="description">{t('descriptions.gradient')}</p>
       </div>

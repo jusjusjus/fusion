@@ -71,7 +71,7 @@ function GradientSky() {
  */
 export default function Scene({
   children,
-  cameraPosition = [5, 4, 5],
+  cameraPosition = [0.5, 0.4, 0.5],
   controlsRef,
   cameraRef,
   injectionMode = false,
@@ -93,8 +93,8 @@ export default function Scene({
         camera={{ position: cameraPosition, fov: 50, near: 0.01, far: 500 }}
       >
         <ambientLight intensity={0.4} />
-        <directionalLight position={[5, 10, 5]} intensity={0.8} />
-        <pointLight position={[-5, -5, -5]} intensity={0.3} color="#6699ff" />
+        <directionalLight position={[0.5, 1.0, 0.5]} intensity={0.8} />
+        <pointLight position={[-0.5, -0.5, -0.5]} intensity={0.3} color="#6699ff" />
 
         <GradientSky />
 

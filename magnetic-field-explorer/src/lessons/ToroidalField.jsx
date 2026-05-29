@@ -53,24 +53,26 @@ export default function ToroidalField() {
   const colormap = (value) => new THREE.Color().setHSL(0.55 + value * 0.15, 0.9, 0.5);
 
   const controls = [
-    { key: 'N', label: t('controls.numCoils'), min: 4, max: 16, step: 1, value: N },
-    { key: 'R0', label: t('controls.radius'), min: 1, max: 4, step: 0.1, value: R0 },
-    { key: 'a', label: t('controls.minorRadius'), min: 0.2, max: 1.5, step: 0.05, value: a },
-    { key: 'current', label: t('controls.current'), min: 0.1, max: 5, step: 0.1, value: current },
+    { key: 'N',        label: t('controls.numCoils'),     min: 4,    max: 32,   step: 1,    decimals: 0, value: N },
+    { key: 'R0',       label: t('controls.radius'),       min: 0.10, max: 5.00, step: 0.05, decimals: 2, value: R0 },
+    { key: 'a',        label: t('controls.minorRadius'),  min: 0.02, max: 1.50, step: 0.02, decimals: 2, value: a },
+    { key: 'current',  label: t('controls.current'),      min: 1,    max: 200,  step: 1,    decimals: 0, value: current },
     {
       key: 'numLines',
       label: t('controls.numFieldLines'),
       min: 0,
       max: 10,
       step: 1,
+      decimals: 0,
       value: numLines,
     },
     {
       key: 'traceLength',
       label: t('controls.traceLength'),
-      min: 20,
-      max: 150,
-      step: 5,
+      min: 2,
+      max: 20,
+      step: 1,
+      decimals: 0,
       value: traceLength,
     },
   ];
@@ -98,7 +100,7 @@ export default function ToroidalField() {
   return (
     <div className="lesson-layout">
       <div className="scene-area">
-        <Scene cameraPosition={[6, 4, 6]} controlsRef={controlsRef} cameraRef={cameraRef}
+        <Scene cameraPosition={[0.6, 0.4, 0.6]} controlsRef={controlsRef} cameraRef={cameraRef}
                injectionMode={injection.injectionMode}
                onInject={(cam) => injection.injectAt(cam)}>
           {coilMeshes.map((midpoints, index) => (
@@ -106,15 +108,15 @@ export default function ToroidalField() {
               <CoilMesh
                 midpoints={midpoints}
                 color={`hsl(${180 + index * 15}, 80%, 60%)`}
-                radius={0.04}
+                current={current}
               />
               <CurrentArrows
                 midpoints={midpoints}
                 weightedDl={coilWeightedDls[index]}
                 color={`hsl(${180 + index * 15}, 80%, 60%)`}
                 nArrows={3}
-                coneRadius={0.05}
-                coneHeight={0.15}
+                coneRadius={0.005}
+                coneHeight={0.015}
               />
             </group>
           ))}
@@ -136,9 +138,8 @@ export default function ToroidalField() {
           onInject={() => injection.injectAt(cameraRef.current)}
           onClear={injection.clearParticles}
           particleCount={injection.particles.length}
-          speed={injection.speed}   onSpeed={injection.setSpeed}
-          charge={injection.charge} onCharge={injection.setCharge}
-          mass={injection.mass}     onMass={injection.setMass}
+          speciesId={injection.speciesId} onSpeciesId={injection.setSpeciesId}
+          energyEV={injection.energyEV}   onEnergyEV={injection.setEnergyEV}
         />
         <p className="description">{t('descriptions.toroidal')}</p>
       </div>

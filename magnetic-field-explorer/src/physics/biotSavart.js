@@ -2,19 +2,21 @@
  * Biot-Savart computation.
  *
  * A coil is described by two Float32Arrays of equal length N:
- *   midpoints   Float32Array (N*3) — segment midpoints
- *   weightedDl  Float32Array (N*3) — dl * current
+ *   midpoints   Float32Array (N*3) — segment midpoints in metres
+ *   weightedDl  Float32Array (N*3) — dl (m) * current (A)
  *
+ * Both functions return B in Tesla when inputs are in metres and amperes.
  * fieldAtPoint uses plain JS (fast for single-point RK4 tracing).
  * fieldAtGrid uses TF.js WebGL broadcasting (fast for large batches).
  */
 
 import * as tf from '@tensorflow/tfjs';
+import { MU0_OVER_4PI } from './units.js';
 
 /**
  * Compute B at a single point x = [x,y,z].
  * Pure JS — no TF.js overhead, safe to call thousands of times per trace.
- * Returns [Bx, By, Bz].
+ * Returns [Bx, By, Bz] in Tesla (inputs in metres and amperes).
  */
 export function fieldAtPoint(x, midpoints, weightedDl, eps = 1e-4) {
   const px = x[0], py = x[1], pz = x[2];
@@ -31,13 +33,13 @@ export function fieldAtPoint(x, midpoints, weightedDl, eps = 1e-4) {
     by += (dlz * rx - dlx * rz) / r3;
     bz += (dlx * ry - dly * rx) / r3;
   }
-  return [bx, by, bz];
+  return [bx * MU0_OVER_4PI, by * MU0_OVER_4PI, bz * MU0_OVER_4PI];
 }
 
 /**
  * Compute B at M grid points using TF.js GPU broadcasting.
  * xs: Float32Array (M*3), midpoints/weightedDl: Float32Array (N*3).
- * Returns Float32Array (M*3).
+ * Returns Float32Array (M*3) in Tesla (inputs in metres and amperes).
  */
 export function fieldAtGrid(xs, midpoints, weightedDl, eps = 1e-4) {
   return tf.tidy(() => {
@@ -51,7 +53,7 @@ export function fieldAtGrid(xs, midpoints, weightedDl, eps = 1e-4) {
     const r2 = tf.add(tf.sum(tf.square(r), 2, true), eps * eps);
     const r3 = tf.pow(r2, 1.5);
     const cross = crossProductBatch(tf.expandDims(dlTensor, 0), r);
-    return tf.sum(tf.div(cross, r3), 1);
+    return tf.mul(tf.sum(tf.div(cross, r3), 1), MU0_OVER_4PI);
   }).dataSync();
 }
 

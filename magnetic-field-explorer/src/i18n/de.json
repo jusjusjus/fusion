@@ -9,16 +9,18 @@
     "gradient": "Gradientenfeld"
   },
   "controls": {
-    "radius": "Radius",
-    "separation": "Abstand",
-    "current": "Stromstärke",
+    "radius": "Radius (m)",
+    "separation": "Abstand (m)",
+    "current": "Stromstärke (A)",
     "numCoils": "Anzahl Spulen",
-    "minorRadius": "Kleiner Radius",
+    "minorRadius": "Kleiner Radius (m)",
     "numFieldLines": "Feldlinien",
     "traceLength": "Spurlänge",
-    "plasmaCurrent": "Plasmastrom Iₚ",
-    "quadratic": "Quadratisch α (z²)",
-    "quartic": "Quartisch β (z⁴)",
+    "plasmaCurrent": "Plasmastrom Iₚ (A)",
+    "baseField": "Grundfeld B₀ (T)",
+    "gradient": "Gradient α (T/m)",
+    "quadratic": "Quadratisch α (T/m²)",
+    "quartic": "Quartisch β (T/m⁴)",
     "compute": "Berechnen",
     "reset": "Zurücksetzen"
   },
@@ -29,9 +31,8 @@
     "hint": "Navigiere mit WASD + Pfeiltasten. Pfeiltasten drehen die Sicht; WASD bewegt dich vorwärts/seitwärts. Leertaste injiziert ein Teilchen.",
     "inject": "Hier injizieren",
     "clear": "Spuren löschen",
-    "speed": "Geschwindigkeit |v₀|",
-    "charge": "Ladung (q)",
-    "mass": "Masse (m)"
+    "species": "Teilchenart",
+    "energy": "Energie"
   },
   "helmholtz": {
     "flipCoil2": "Spule 2 umkehren",
@@ -45,14 +46,14 @@
     "antiHelmholtz": "Mit umgekehrtem Strom in der unteren Spule stoßen sich die Flüsse gegenseitig ab und bilden eine Anti-Helmholtz- (Magnetspiegelkonfiguration). Das Feld ist in der Mitte null und stark an jeder Spule – nützlich zum Einfangen von Teilchen.",
     "toroidal": "N symmetrisch um einen Torus angeordnete Spulen erzeugen ein toroidales Magnetfeld. Geladene Teilchen können in dieser Geometrie eingeschlossen werden – die Grundlage von Tokamak- und Stellarator-Fusionsreaktoren.",
     "tokamak": "Fügt dem toroidalen Spulenfeld einen zentralen Plasmastrom Iₚ hinzu. Der Strom fließt in toroidaler (φ-)Richtung; nach dem Ampèreschen Gesetz induziert er ein poloidales Feld, das sich um den kleinen Querschnitt wickelt. Zusammen erzeugen toroidale und poloidale Komponenten helikale Feldlinien – das Merkmal des Tokamak-Einschlusses. Der Rotationstransform ι (Feldlinienwindungszahl) wird durch das Verhältnis von poloidaler zu toroidaler Feldstärke bestimmt.",
-    "gradient": "Ein rein analytisches Feld, bei dem Bz in x-Richtung variiert: Bz(x) = B₀ + α·x² + β·x⁴, mit Bx = By = 0. Das Feld ist divergenzfrei, da ∂Bz/∂z = 0. α > 0 konzentriert die Feldlinien nahe x = 0 (stärkeres Feld im Zentrum). α < 0 verlagert die Feldstärke zu den Rändern – ein transversaler Gradient, der in MRT und Plasmaeinschluss relevant ist.",
+    "gradient": "Ein physikalisch konsistentes lineares Gradientenfeld. Bz = B0 + α·x bei z=0, mit der notwendigen Komponente Bx = α·z, die durch ∇×B = 0 (Faradaysches Gesetz) erzwungen wird. Das Feld erfüllt ∇·B = 0 und ∇×B = 0 überall. Ein geladenes Teilchen kreist um die z-Achse und driftet gleichzeitig in y-Richtung: v_drift = (mv⊥²/2q)·α/B².",
     "helicalSheet": "Eine radiale Linie von Startpunkten wird entlang der Feldlinien advektiert. Der Rotationstransform iota(r) ∝ r bewirkt, dass äußere Linien schneller winden und die Gerade in eine helikale Fläche verformt wird."
   },
   "charts": {
     "bzOnAxis": "Bz auf der Achse",
-    "bzProfile": "Bz(z)-Profil",
+    "bzProfile": "Bz(x)-Profil (mT)",
     "axialPosition": "z / a",
-    "fieldStrength": "Bz (willk. Einh.)"
+    "fieldStrength": "Bz (μT)"
   },
   "info": {
     "tfBackend": "Rechenbackend",

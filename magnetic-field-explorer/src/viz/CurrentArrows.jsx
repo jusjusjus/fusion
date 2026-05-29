@@ -18,8 +18,8 @@ export default function CurrentArrows({
   weightedDl,
   color = '#ff6600',
   nArrows = 8,
-  coneRadius = 0.06,
-  coneHeight = 0.18,
+  coneRadius = 0.006,
+  coneHeight = 0.018,
 }) {
   const meshRef = useRef();
 

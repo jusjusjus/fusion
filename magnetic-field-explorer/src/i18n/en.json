@@ -9,16 +9,18 @@
     "gradient": "Gradient Field"
   },
   "controls": {
-    "radius": "Radius",
-    "separation": "Separation",
-    "current": "Current",
+    "radius": "Radius (m)",
+    "separation": "Separation (m)",
+    "current": "Current (A)",
     "numCoils": "No. of Coils",
-    "minorRadius": "Minor Radius",
+    "minorRadius": "Minor Radius (m)",
     "numFieldLines": "Field Lines",
     "traceLength": "Trace Length",
-    "plasmaCurrent": "Plasma current Iₚ",
-    "quadratic": "Quadratic α (z²)",
-    "quartic": "Quartic β (z⁴)",
+    "plasmaCurrent": "Plasma current Iₚ (A)",
+    "baseField": "Base field B₀ (T)",
+    "gradient": "Gradient α (T/m)",
+    "quadratic": "Quadratic α (T/m²)",
+    "quartic": "Quartic β (T/m⁴)",
     "compute": "Compute",
     "reset": "Reset"
   },
@@ -29,9 +31,8 @@
     "hint": "Navigate with WASD + arrow keys. Arrow keys look around; WASD moves. Press Space to inject a particle.",
     "inject": "Inject here",
     "clear": "Clear traces",
-    "speed": "Speed |v₀|",
-    "charge": "Charge (q)",
-    "mass": "Mass (m)"
+    "species": "Species",
+    "energy": "Energy"
   },
   "helmholtz": {
     "flipCoil2": "Reverse coil 2",
@@ -45,14 +46,14 @@
     "antiHelmholtz": "With the lower coil's current reversed the two coils repel each other's flux, creating an anti-Helmholtz (magnetic mirror) configuration. The field is zero at the midplane and strong at each coil — useful for trapping particles.",
     "toroidal": "Arranging N coils symmetrically around a torus creates a toroidal magnetic field. Charged particles can be confined in such a geometry — the basis of tokamak and stellarator fusion reactors.",
     "tokamak": "Adds a central plasma current Iₚ to the toroidal coil field. The current flows in the toroidal (φ) direction; by Ampère's law it induces a poloidal field that wraps around the minor cross-section. Together the toroidal and poloidal components create helical field lines — the hallmark of tokamak confinement. The rotational transform ι (field-line winding number) is set by the ratio of poloidal to toroidal field strength.",
-    "gradient": "A purely analytical field where Bz varies in the x-direction: Bz(x) = B₀ + α·x² + β·x⁴, with Bx = By = 0. The field is divergence-free since ∂Bz/∂z = 0. α > 0 concentrates field lines near x = 0 (stronger field in the center). α < 0 pushes field strength to the edges — a transverse gradient relevant to MRI and plasma confinement.",
+    "gradient": "A physically self-consistent linear gradient field. Bz = B0 + α·x at z=0, with the required Bx = α·z component enforced by ∇×B = 0 (Faraday's law). The field satisfies both ∇·B = 0 and ∇×B = 0 everywhere. A charged particle gyrates around the z-axis while drifting in the y-direction due to the gradient force: v_drift = (mv⊥²/2q)·α/B².",
     "helicalSheet": "A radial line of starting points is advected along field lines. The rotational transform iota(r) ∝ r causes outer lines to wind faster, shearing the initial straight line into a helical sheet."
   },
   "charts": {
     "bzOnAxis": "Bz on axis",
-    "bzProfile": "Bz(z) profile",
+    "bzProfile": "Bz(x) profile (mT)",
     "axialPosition": "z / a",
-    "fieldStrength": "Bz (a.u.)"
+    "fieldStrength": "Bz (μT)"
   },
   "info": {
     "tfBackend": "Compute backend",

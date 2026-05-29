@@ -67,11 +67,11 @@ function borisStep(x, v, B, q, m, dt) {
     vMinus[0] * s[1] - vMinus[1] * s[0],
   ];
 
-  // v+ = v- + v' × s  … actually v' is v' = vMinus × s, then v+ = v- + v'
+  // v+ = v + v'×s  (Birdsall & Langdon eq. 4-5: v+ = v- + v'×s, v- = v here)
   const vPlus = [
-    vMinus[0] + vPrime[0],
-    vMinus[1] + vPrime[1],
-    vMinus[2] + vPrime[2],
+    v[0] + vPrime[0],
+    v[1] + vPrime[1],
+    v[2] + vPrime[2],
   ];
 
   const xNew = [x[0] + vPlus[0] * dt, x[1] + vPlus[1] * dt, x[2] + vPlus[2] * dt];

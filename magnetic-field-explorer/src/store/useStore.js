@@ -7,13 +7,13 @@ const useStore = create((set) => ({
   tfBackend: 'initializing',
   setTfBackend: (b) => set({ tfBackend: b }),
 
-  // Per-lesson parameters
+  // Per-lesson parameters (all in SI: metres, amperes, tesla)
   params: {
-    singleLoop: { radius: 1, current: 1, n: 200 },
-    helmholtz: { radius: 1, separation: 1, current: 1, n: 200 },
-    toroidal: { N: 8, R0: 2, a: 0.6, current: 1, n: 200, numLines: 5, traceLength: 80 },
-    tokamak:  { N: 8, R0: 2, a: 0.6, current: 1, Icentral: 0, n: 200, numLines: 5, traceLength: 120 },
-    gradient: { B0: 1, alpha: 0, beta: 0, numLines: 4, traceLength: 14 },
+    singleLoop: { radius: 0.10, current: 1.0, n: 200 },
+    helmholtz:  { radius: 0.10, separation: 0.10, current: 1.0, n: 200 },
+    toroidal:   { N: 12, R0: 1.00, a: 0.30, current: 50,  n: 200, numLines: 5, traceLength: 8 },
+    tokamak:    { N: 12, R0: 1.00, a: 0.30, current: 50,  Icentral: 200, n: 200, numLines: 5, traceLength: 12 },
+    gradient:   { B0: 0.001, alpha: 0.05, beta: 0, numLines: 4, traceLength: 0.5 },
   },
 
   setParam: (lesson, key, value) =>

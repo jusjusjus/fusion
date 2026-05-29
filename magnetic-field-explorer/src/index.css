@@ -353,6 +353,29 @@ input[type="range"] {
 .clear-btn:hover:not(:disabled) { background: var(--border); color: var(--text); }
 .clear-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+.species-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+.species-btn {
+  padding: 3px 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  transition: background 0.15s, color 0.15s;
+}
+.species-btn:hover { background: var(--border); color: var(--text); }
+.species-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
 /* ── Flip row (Helmholtz coil direction toggle) ───────────────── */
 .flip-row {
   display: flex;
