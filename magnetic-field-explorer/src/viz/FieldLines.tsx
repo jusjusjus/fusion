@@ -1,13 +1,19 @@
-import { useMemo } from 'react';
 import * as THREE from 'three';
 import { Line } from '@react-three/drei';
 
-/**
- * Renders an array of field line trajectories.
- * lines: array of Float32Array (each (nsteps+1)*3)
- * colormap: function (t in [0,1]) → THREE.Color
- */
-export default function FieldLines({ lines, colormap, lineWidth = 1, opacity = 0.7 }) {
+interface FieldLinesProps {
+  lines: Float32Array[];
+  colormap?: (t: number) => THREE.Color;
+  lineWidth?: number;
+  opacity?: number;
+}
+
+export default function FieldLines({
+  lines,
+  colormap,
+  lineWidth = 1,
+  opacity = 0.7,
+}: FieldLinesProps) {
   if (!lines || lines.length === 0) return null;
 
   return (
@@ -17,7 +23,7 @@ export default function FieldLines({ lines, colormap, lineWidth = 1, opacity = 0
           ? colormap(idx / Math.max(lines.length - 1, 1))
           : new THREE.Color('#ff4466');
         const n = traj.length / 3;
-        const points = [];
+        const points: THREE.Vector3[] = [];
         for (let i = 0; i < n; i++) {
           points.push(new THREE.Vector3(traj[i * 3], traj[i * 3 + 1], traj[i * 3 + 2]));
         }
@@ -26,7 +32,7 @@ export default function FieldLines({ lines, colormap, lineWidth = 1, opacity = 0
             key={idx}
             points={points}
             color={color}
-            lineWidth={lineWidth}
+            lineWidth={lineWidth as number}
             transparent
             opacity={opacity}
           />

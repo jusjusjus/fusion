@@ -1,20 +1,35 @@
 import { useCallback, useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { Canvas } from '@react-three/fiber';
+import type { ReactNode, RefObject } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, GizmoHelper, GizmoViewport } from '@react-three/drei';
 import * as THREE from 'three';
-import FirstPersonControls from './FirstPersonControls.jsx';
+import FirstPersonControls from './FirstPersonControls';
 
-/** Updates cameraRef.current with the live THREE.Camera each frame. */
-function CameraSync({ cameraRef }) {
+interface SceneProps {
+  children?: ReactNode;
+  cameraPosition?: [number, number, number];
+  controlsRef?: RefObject<any>;
+  cameraRef?: RefObject<THREE.Camera | null>;
+  injectionMode?: boolean;
+  onInject?: (camera: THREE.Camera) => void;
+}
+
+interface CameraSyncProps {
+  cameraRef: RefObject<THREE.Camera | null>;
+}
+
+interface CameraCoordsProps {
+  domRef: RefObject<HTMLDivElement | null>;
+}
+
+function CameraSync({ cameraRef }: CameraSyncProps): null {
   useFrame(({ camera }) => {
-    if (cameraRef) cameraRef.current = camera;
+    cameraRef.current = camera;
   });
   return null;
 }
 
-/** Writes camera xyz directly to a DOM element — no React re-renders. */
-function CameraCoords({ domRef }) {
+function CameraCoords({ domRef }: CameraCoordsProps): null {
   useFrame(({ camera }) => {
     if (!domRef.current) return;
     const { x, y, z } = camera.position;
@@ -26,11 +41,6 @@ function CameraCoords({ domRef }) {
   return null;
 }
 
-/**
- * Subtle world-space Z gradient on the inside of a large sphere.
- * Helps the user sense orientation (especially in FPV mode).
- * Colors: near-black navy at z– → near-black teal at z+.
- */
 const gradientVert = /* glsl */`
   varying vec3 vWorldPos;
   void main() {
@@ -43,8 +53,8 @@ const gradientFrag = /* glsl */`
   varying vec3 vWorldPos;
   void main() {
     float t = clamp((vWorldPos.y + 30.0) / 60.0, 0.0, 1.0);
-    vec3 colNeg = vec3(0.038, 0.055, 0.102);  // dark navy  (below)
-    vec3 colPos = vec3(0.038, 0.102, 0.120);  // dark teal  (above)
+    vec3 colNeg = vec3(0.038, 0.055, 0.102);
+    vec3 colPos = vec3(0.038, 0.102, 0.120);
     gl_FragColor = vec4(mix(colNeg, colPos, t), 1.0);
   }
 `;
@@ -63,12 +73,6 @@ function GradientSky() {
   );
 }
 
-/**
- * Shared 3D scene wrapper with orbit controls and lighting.
- *
- * When `injectionMode` is true, OrbitControls are disabled and
- * FirstPersonControls take over (arrow keys + WASD + Space).
- */
 export default function Scene({
   children,
   cameraPosition = [0.5, 0.4, 0.5],
@@ -76,14 +80,13 @@ export default function Scene({
   cameraRef,
   injectionMode = false,
   onInject,
-}) {
-  const coordsRef = useRef(null);
-  const internalControlsRef = useRef(null);
+}: SceneProps) {
+  const coordsRef = useRef<HTMLDivElement | null>(null);
+  const internalControlsRef = useRef<any>(null);
   const resolvedControlsRef = controlsRef ?? internalControlsRef;
 
   const resetCamera = useCallback(() => {
-    // OrbitControls reset restores initial camera position + target
-    resolvedControlsRef.current?.reset();
+    resolvedControlsRef.current?.reset?.();
   }, [resolvedControlsRef]);
 
   return (
@@ -148,4 +151,3 @@ export default function Scene({
     </div>
   );
 }
-

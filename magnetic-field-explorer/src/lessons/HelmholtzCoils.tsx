@@ -1,19 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as THREE from 'three';
-import Scene from '../viz/Scene.jsx';
-import CoilMesh from '../viz/CoilMesh.jsx';
-import CurrentArrows from '../viz/CurrentArrows.jsx';
-import FieldLines from '../viz/FieldLines.jsx';
-import InjectionMarker from '../viz/InjectionMarker.jsx';
-import ParticleTraces from '../viz/ParticleTraces.jsx';
-import ControlPanel from '../components/ControlPanel.jsx';
-import InjectionPanel from '../components/InjectionPanel.jsx';
-import useStore from '../store/useStore.js';
-import { circularLoop, mergeCoils } from '../physics/coils.js';
-import { fieldAtPoint } from '../physics/biotSavart.js';
-import { traceFieldlines } from '../physics/fieldlines.js';
-import { useParticleInjection } from '../hooks/useParticleInjection.js';
+import Scene from '../viz/Scene';
+import CoilMesh from '../viz/CoilMesh';
+import CurrentArrows from '../viz/CurrentArrows';
+import FieldLines from '../viz/FieldLines';
+import InjectionMarker from '../viz/InjectionMarker';
+import ParticleTraces from '../viz/ParticleTraces';
+import ControlPanel from '../components/ControlPanel';
+import InjectionPanel from '../components/InjectionPanel';
+import useStore from '../store/useStore';
+import { circularLoop, mergeCoils } from '../physics/coils';
+import { fieldAtPoint } from '../physics/biotSavart';
+import { traceFieldlines, type BFunc } from '../physics/fieldlines';
+import { useParticleInjection } from '../hooks/useParticleInjection';
 
 const COLOR_COIL1 = '#ffaa00';
 const COLOR_COIL2_NORMAL = '#00ccff';
@@ -24,10 +24,10 @@ export default function HelmholtzCoils() {
   const { params, setParam } = useStore();
   const { radius, separation, current, n } = params.helmholtz;
   const [computing, setComputing] = useState(false);
-  const [fieldLines, setFieldLines] = useState([]);
+  const [fieldLines, setFieldLines] = useState<Float32Array[]>([]);
   const [coil2Flipped, setCoil2Flipped] = useState(false);
-  const controlsRef = useRef();
-  const cameraRef = useRef();
+  const controlsRef = useRef<{ reset?: () => void } | null>(null);
+  const cameraRef = useRef<THREE.Camera | null>(null);
 
   const current2 = coil2Flipped ? -current : current;
   const coil2Color = coil2Flipped ? COLOR_COIL2_FLIPPED : COLOR_COIL2_NORMAL;
@@ -37,31 +37,26 @@ export default function HelmholtzCoils() {
       coil1: circularLoop({ radius, z: separation / 2, n, current }),
       coil2: circularLoop({ radius, z: -separation / 2, n, current: current2 }),
     }),
-    [radius, separation, current, current2, n]
+    [radius, separation, current, current2, n],
   );
 
   const merged = useMemo(() => mergeCoils([coil1, coil2]), [coil1, coil2]);
 
-  const bFunc = useMemo(
+  const bFunc = useMemo<BFunc>(
     () => (x) => fieldAtPoint(x, merged.midpoints, merged.weightedDl),
-    [merged]
+    [merged],
   );
 
   const injection = useParticleInjection(bFunc);
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
+    const timeoutId = window.setTimeout(() => {
       setComputing(true);
 
-      // Seeds in the planes of each coil (z = ±separation/2) at increasing radii.
-      // Seeding from the coil plane (not the midplane) lets bidirectional tracing
-      // reveal both the single-coil wrapping lines (one arc away from the coil) and
-      // the cross-coil lines (the other arc threading through both coils).
-      // Avoid r≈0 (on-axis lines run straight and never close).
       const radii = [0.10, 0.25, 0.45, 0.68, 0.92, 1.20];
       const phis = [0, Math.PI / 2, Math.PI];
       const zPlanes = [separation / 2, -separation / 2];
-      const seeds = [];
+      const seeds: Float32Array[] = [];
       for (const z of zPlanes) {
         for (const r of radii) {
           for (const phi of phis) {
@@ -70,36 +65,26 @@ export default function HelmholtzCoils() {
                 radius * r * Math.cos(phi),
                 radius * r * Math.sin(phi),
                 z,
-              ])
+              ]),
             );
           }
         }
       }
 
-      // Long enough for the outermost field lines to close.
-      // Bidirectional: half-arc backward + half-arc forward, so each direction gets length/2.
       const lines = traceFieldlines(seeds, bFunc, { length: radius * 80, nsteps: 2000, bidirectional: true });
       setFieldLines(lines);
       setComputing(false);
     }, 10);
 
-    return () => clearTimeout(timeoutId);
-  }, [bFunc, radius]);
+    return () => window.clearTimeout(timeoutId);
+  }, [bFunc, radius, separation]);
 
-  const colormap = (value) => new THREE.Color().setHSL(0.55 - value * 0.3, 1, 0.55);
+  const colormap = (value: number): THREE.Color => new THREE.Color().setHSL(0.55 - value * 0.3, 1, 0.55);
 
   const controls = [
     { key: 'radius',     label: t('controls.radius'),     min: 0.05, max: 0.5,  step: 0.01, decimals: 2, value: radius },
-    {
-      key: 'separation',
-      label: t('controls.separation'),
-      min: 0.02,
-      max: 0.5,
-      step: 0.01,
-      decimals: 2,
-      value: separation,
-    },
-    { key: 'current', label: t('controls.current'), min: 0.1, max: 10.0, step: 0.1, decimals: 1, value: current },
+    { key: 'separation', label: t('controls.separation'), min: 0.02, max: 0.5,  step: 0.01, decimals: 2, value: separation },
+    { key: 'current',    label: t('controls.current'),    min: 0.1,  max: 10.0, step: 0.1,  decimals: 1, value: current },
   ];
 
   const configLabel = coil2Flipped
@@ -109,9 +94,13 @@ export default function HelmholtzCoils() {
   return (
     <div className="lesson-layout">
       <div className="scene-area">
-        <Scene cameraPosition={[0.5, 0.4, 0.5]} controlsRef={controlsRef} cameraRef={cameraRef}
-               injectionMode={injection.injectionMode}
-               onInject={(cam) => injection.injectAt(cam)}>
+        <Scene
+          cameraPosition={[0.5, 0.4, 0.5]}
+          controlsRef={controlsRef}
+          cameraRef={cameraRef}
+          injectionMode={injection.injectionMode}
+          onInject={(cam) => injection.injectAt(cam)}
+        >
           <CoilMesh midpoints={coil1.midpoints} color={COLOR_COIL1} current={current} />
           <CurrentArrows midpoints={coil1.midpoints} weightedDl={coil1.weightedDl} color={COLOR_COIL1} />
           <CoilMesh midpoints={coil2.midpoints} color={coil2Color} current={current2} />
@@ -131,7 +120,7 @@ export default function HelmholtzCoils() {
           <span className="config-label">{configLabel}</span>
           <button
             className={`flip-btn${coil2Flipped ? ' flipped' : ''}`}
-            onClick={() => setCoil2Flipped((f) => !f)}
+            onClick={() => setCoil2Flipped((flipped) => !flipped)}
           >
             {coil2Flipped ? t('helmholtz.restoreCoil2') : t('helmholtz.flipCoil2')}
           </button>
@@ -143,8 +132,10 @@ export default function HelmholtzCoils() {
           onInject={() => injection.injectAt(cameraRef.current)}
           onClear={injection.clearParticles}
           particleCount={injection.particles.length}
-          speciesId={injection.speciesId} onSpeciesId={injection.setSpeciesId}
-          energyEV={injection.energyEV}   onEnergyEV={injection.setEnergyEV}
+          speciesId={injection.speciesId}
+          onSpeciesId={injection.setSpeciesId}
+          energyEV={injection.energyEV}
+          onEnergyEV={injection.setEnergyEV}
         />
         <p className="description">
           {coil2Flipped ? t('descriptions.antiHelmholtz') : t('descriptions.helmholtz')}

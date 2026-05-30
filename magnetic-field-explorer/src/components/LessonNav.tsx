@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import useStore from '../store/useStore';
 
-const LESSONS = [
-  { id: 'home',      icon: '🏠' },
+const LESSONS: Array<{ id: string; icon: string }> = [
+  { id: 'home',       icon: '🏠' },
   { id: 'singleLoop', icon: '⭕' },
-  { id: 'helmholtz', icon: '🔵' },
-  { id: 'toroidal',  icon: '🍩' },
-  { id: 'tokamak',   icon: '⚛' },
-  { id: 'gradient',  icon: '∇' },
+  { id: 'helmholtz',  icon: '🔵' },
+  { id: 'toroidal',   icon: '🍩' },
+  { id: 'tokamak',    icon: '⚛' },
+  { id: 'gradient',   icon: '∇' },
 ];
 
 export default function LessonNav() {

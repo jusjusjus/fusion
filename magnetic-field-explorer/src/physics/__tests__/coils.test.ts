@@ -6,7 +6,7 @@ import {
   verticalCircularCoil,
   helicalCoil,
   mergeCoils,
-} from '../coils.js';
+} from '../coils';
 
 describe('circularLoop', () => {
   const n = 100;

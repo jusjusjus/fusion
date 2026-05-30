@@ -1,5 +1,18 @@
+import type { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PARTICLES } from '../physics/particles.js';
+import { PARTICLES } from '../physics/particles';
+
+interface InjectionPanelProps {
+  active: boolean;
+  onToggle: () => void;
+  onInject: () => void;
+  onClear: () => void;
+  particleCount?: number;
+  speciesId: string;
+  onSpeciesId: (id: string) => void;
+  energyEV: number;
+  onEnergyEV: (ev: number) => void;
+}
 
 /**
  * Sidebar panel for particle injection mode.
@@ -19,10 +32,17 @@ export default function InjectionPanel({
   onInject,
   onClear,
   particleCount = 0,
-  speciesId, onSpeciesId,
-  energyEV,  onEnergyEV,
-}) {
+  speciesId,
+  onSpeciesId,
+  energyEV,
+  onEnergyEV,
+}: InjectionPanelProps) {
   const { t } = useTranslation();
+
+  const handleEnergyChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const v = parseFloat(e.target.value);
+    if (!Number.isNaN(v) && v > 0) onEnergyEV(v);
+  };
 
   return (
     <div className="injection-panel">
@@ -41,11 +61,10 @@ export default function InjectionPanel({
           <p className="injection-hint">{t('injection.hint')}</p>
 
           <div className="injection-controls">
-            {/* Species selector */}
             <div className="control-row">
               <label>{t('injection.species')}</label>
               <div className="species-buttons">
-                {PARTICLES.map(p => (
+                {PARTICLES.map((p) => (
                   <button
                     key={p.id}
                     className={`species-btn${speciesId === p.id ? ' active' : ''}`}
@@ -57,7 +76,6 @@ export default function InjectionPanel({
               </div>
             </div>
 
-            {/* Energy input */}
             <div className="control-row">
               <label>{t('injection.energy')}</label>
               <input
@@ -65,10 +83,7 @@ export default function InjectionPanel({
                 min={1e-6}
                 step="any"
                 value={energyEV}
-                onChange={e => {
-                  const v = parseFloat(e.target.value);
-                  if (!isNaN(v) && v > 0) onEnergyEV(v);
-                }}
+                onChange={handleEnergyChange}
                 className="number-input"
               />
               <span className="control-hint">eV — thermal: 0.016 · keV–MeV for visible orbits</span>
@@ -92,5 +107,3 @@ export default function InjectionPanel({
     </div>
   );
 }
-
-

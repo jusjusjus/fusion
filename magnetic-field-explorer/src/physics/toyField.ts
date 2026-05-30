@@ -8,8 +8,20 @@
  * The growing gyro-radius seen in particle injection is a known consequence;
  * use it to visualise gradient drift direction, not orbit shape.
  */
-export function toyMagneticField({ B0, alpha, beta }) {
-  return ([x, _y, _z]) => {
+export interface ToyFieldParams {
+  B0: number;
+  alpha: number;
+  beta: number;
+}
+
+export interface BzSample {
+  x: number;
+  Bz: number;
+}
+
+export function toyMagneticField({ B0, alpha, beta }: ToyFieldParams): (pos: number[]) => number[] {
+  return (pos: number[]): number[] => {
+    const x = pos[0];
     const Bz = B0 + alpha * x ** 2 + beta * x ** 4;
     return [0, 0, Bz];
   };
@@ -18,13 +30,17 @@ export function toyMagneticField({ B0, alpha, beta }) {
 /**
  * Sample Bz(x) for charting.  Returns array of {x, Bz}.
  */
-export function sampleBzProfile({ B0, alpha, beta }, xMin = -0.3, xMax = 0.3, nPts = 80) {
-  const data = [];
+export function sampleBzProfile(
+  { B0, alpha, beta }: ToyFieldParams,
+  xMin = -0.3,
+  xMax = 0.3,
+  nPts = 80,
+): BzSample[] {
+  const data: BzSample[] = [];
   for (let i = 0; i < nPts; i++) {
-    const x = xMin + (xMax - xMin) * i / (nPts - 1);
+    const x = xMin + ((xMax - xMin) * i) / (nPts - 1);
     const Bz = B0 + alpha * x ** 2 + beta * x ** 4;
     data.push({ x: +x.toFixed(3), Bz: +Bz.toFixed(6) });
   }
   return data;
 }
-

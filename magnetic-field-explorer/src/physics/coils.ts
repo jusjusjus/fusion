@@ -5,15 +5,61 @@
  * where weightedDl = dl * current.
  */
 
+export interface Coil {
+  midpoints: Float32Array;
+  weightedDl: Float32Array;
+}
+
+interface CircularLoopOptions {
+  radius: number;
+  z: number;
+  n: number;
+  current: number;
+}
+
+interface HelmholtzPairOptions {
+  radius: number;
+  separation: number;
+  n: number;
+  current: number;
+}
+
+interface ToroidalSetOptions {
+  N: number;
+  R0: number;
+  a: number;
+  n: number;
+  current: number;
+}
+
+interface VerticalCircularCoilOptions {
+  phi0: number;
+  R0: number;
+  a: number;
+  n: number;
+  current: number;
+}
+
+interface HelicalCoilOptions {
+  R0: number;
+  a: number;
+  nfp: number;
+  phase: number;
+  n: number;
+  current: number;
+}
+
 /** Discretized circular loop in the XY plane at height z. */
-export function circularLoop({ radius = 1, z = 0, n = 200, current = 1 } = {}) {
+export function circularLoop({ radius = 1, z = 0, n = 200, current = 1 }: Partial<CircularLoopOptions> = {}): Coil {
   const midpoints = new Float32Array(n * 3);
   const weightedDl = new Float32Array(n * 3);
   for (let i = 0; i < n; i++) {
     const phi0 = (2 * Math.PI * i) / n;
     const phi1 = (2 * Math.PI * (i + 1)) / n;
-    const x0 = radius * Math.cos(phi0), y0 = radius * Math.sin(phi0);
-    const x1 = radius * Math.cos(phi1), y1 = radius * Math.sin(phi1);
+    const x0 = radius * Math.cos(phi0);
+    const y0 = radius * Math.sin(phi0);
+    const x1 = radius * Math.cos(phi1);
+    const y1 = radius * Math.sin(phi1);
     midpoints[i * 3 + 0] = 0.5 * (x0 + x1);
     midpoints[i * 3 + 1] = 0.5 * (y0 + y1);
     midpoints[i * 3 + 2] = z;
@@ -25,7 +71,7 @@ export function circularLoop({ radius = 1, z = 0, n = 200, current = 1 } = {}) {
 }
 
 /** Two coaxial circular loops — Helmholtz configuration when separation = radius. */
-export function helmholtzPair({ radius = 1, separation = 1, n = 200, current = 1 } = {}) {
+export function helmholtzPair({ radius = 1, separation = 1, n = 200, current = 1 }: Partial<HelmholtzPairOptions> = {}): Coil {
   const top = circularLoop({ radius, z: separation / 2, n, current });
   const bot = circularLoop({ radius, z: -separation / 2, n, current });
   return mergeCoils([top, bot]);
@@ -35,8 +81,8 @@ export function helmholtzPair({ radius = 1, separation = 1, n = 200, current = 1
  * N vertical circular coils arranged toroidally.
  * Each coil sits in a radial plane at toroidal angle phi_k = 2π k / N.
  */
-export function toroidalSet({ N = 8, R0 = 2, a = 0.6, n = 200, current = 1 } = {}) {
-  const coils = [];
+export function toroidalSet({ N = 8, R0 = 2, a = 0.6, n = 200, current = 1 }: Partial<ToroidalSetOptions> = {}): Coil {
+  const coils: Coil[] = [];
   for (let k = 0; k < N; k++) {
     const phi0 = (2 * Math.PI * k) / N;
     coils.push(verticalCircularCoil({ phi0, R0, a, n, current }));
@@ -45,16 +91,22 @@ export function toroidalSet({ N = 8, R0 = 2, a = 0.6, n = 200, current = 1 } = {
 }
 
 /** Single circular coil in a vertical plane at toroidal angle phi0. */
-export function verticalCircularCoil({ phi0 = 0, R0 = 2, a = 0.6, n = 200, current = 1 } = {}) {
+export function verticalCircularCoil({ phi0 = 0, R0 = 2, a = 0.6, n = 200, current = 1 }: Partial<VerticalCircularCoilOptions> = {}): Coil {
   const midpoints = new Float32Array(n * 3);
   const weightedDl = new Float32Array(n * 3);
-  const eRx = Math.cos(phi0), eRy = Math.sin(phi0);
-  const Cx = R0 * eRx, Cy = R0 * eRy;
+  const eRx = Math.cos(phi0);
+  const eRy = Math.sin(phi0);
+  const Cx = R0 * eRx;
+  const Cy = R0 * eRy;
   for (let i = 0; i < n; i++) {
     const theta0 = (2 * Math.PI * i) / n;
     const theta1 = (2 * Math.PI * (i + 1)) / n;
-    const r0x = Cx + a * Math.cos(theta0) * eRx, r0y = Cy + a * Math.cos(theta0) * eRy, r0z = a * Math.sin(theta0);
-    const r1x = Cx + a * Math.cos(theta1) * eRx, r1y = Cy + a * Math.cos(theta1) * eRy, r1z = a * Math.sin(theta1);
+    const r0x = Cx + a * Math.cos(theta0) * eRx;
+    const r0y = Cy + a * Math.cos(theta0) * eRy;
+    const r0z = a * Math.sin(theta0);
+    const r1x = Cx + a * Math.cos(theta1) * eRx;
+    const r1y = Cy + a * Math.cos(theta1) * eRy;
+    const r1z = a * Math.sin(theta1);
     midpoints[i * 3 + 0] = 0.5 * (r0x + r1x);
     midpoints[i * 3 + 1] = 0.5 * (r0y + r1y);
     midpoints[i * 3 + 2] = 0.5 * (r0z + r1z);
@@ -66,7 +118,7 @@ export function verticalCircularCoil({ phi0 = 0, R0 = 2, a = 0.6, n = 200, curre
 }
 
 /** Helical coil wound on a torus surface (stellarator-like). */
-export function helicalCoil({ R0 = 2, a = 0.5, nfp = 3, phase = 0, n = 1200, current = 1 } = {}) {
+export function helicalCoil({ R0 = 2, a = 0.5, nfp = 3, phase = 0, n = 1200, current = 1 }: Partial<HelicalCoilOptions> = {}): Coil {
   const pts = new Float32Array((n + 1) * 3);
   for (let i = 0; i <= n; i++) {
     const phi = (2 * Math.PI * i) / n;
@@ -88,20 +140,20 @@ export function helicalCoil({ R0 = 2, a = 0.5, nfp = 3, phase = 0, n = 1200, cur
 }
 
 /** Merge an array of { midpoints, weightedDl } coils into one. */
-export function mergeCoils(coils) {
-  const totalN = coils.reduce((s, c) => s + c.midpoints.length / 3, 0);
+export function mergeCoils(coils: Coil[]): Coil {
+  const totalN = coils.reduce((sum, coil) => sum + coil.midpoints.length / 3, 0);
   const midpoints = new Float32Array(totalN * 3);
   const weightedDl = new Float32Array(totalN * 3);
   let offset = 0;
-  for (const c of coils) {
-    midpoints.set(c.midpoints, offset * 3);
-    weightedDl.set(c.weightedDl, offset * 3);
-    offset += c.midpoints.length / 3;
+  for (const coil of coils) {
+    midpoints.set(coil.midpoints, offset * 3);
+    weightedDl.set(coil.weightedDl, offset * 3);
+    offset += coil.midpoints.length / 3;
   }
   return { midpoints, weightedDl };
 }
 
 /** Return just the wire path as a Float32Array of 3*(n+1) values (for rendering). */
-export function coilWirePath(midpoints) {
+export function coilWirePath(midpoints: Float32Array): Float32Array {
   return midpoints;
 }

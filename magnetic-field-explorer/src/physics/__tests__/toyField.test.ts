@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { toyMagneticField, sampleBzProfile } from '../toyField.js';
+import { toyMagneticField, sampleBzProfile } from '../toyField';
 
 describe('toyMagneticField', () => {
   it('returns B0 everywhere when alpha = beta = 0', () => {

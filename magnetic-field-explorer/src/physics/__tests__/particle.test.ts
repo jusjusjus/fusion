@@ -6,7 +6,7 @@
  * velocity vector). Tests verify this mathematically and physically.
  */
 import { describe, it, expect } from 'vitest';
-import { traceParticle, kineticEnergy } from '../particle.js';
+import { traceParticle, kineticEnergy } from '../particle';
 
 // Electron constants (SI)
 const Q_ELECTRON = -1.602176634e-19;  // C

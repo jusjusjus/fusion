@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import useStore, { DEFAULTS, ITER_TOROIDAL, ITER_TOKAMAK } from '../../store/useStore.js';
+import useStore, { DEFAULTS, ITER_TOROIDAL, ITER_TOKAMAK } from '../../store/useStore';
 
 // Deep-clone the defaults before every test so mutations don't leak
 beforeEach(() => {

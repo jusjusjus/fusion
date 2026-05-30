@@ -1,6 +1,6 @@
 import { vi, describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import ControlPanel from '../ControlPanel.jsx';
+import ControlPanel from '../ControlPanel';
 
 // ControlPanel has no i18n dependencies — it receives all strings as props.
 

@@ -4,7 +4,7 @@ export default function LanguageToggle() {
   const { i18n } = useTranslation();
   const lang = i18n.language;
 
-  const toggle = () => i18n.changeLanguage(lang.startsWith('de') ? 'en' : 'de');
+  const toggle = (): Promise<unknown> => i18n.changeLanguage(lang.startsWith('de') ? 'en' : 'de');
 
   return (
     <button className="lang-toggle" onClick={toggle} title="Toggle language / Sprache wechseln">

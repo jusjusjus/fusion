@@ -1,44 +1,43 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as THREE from 'three';
-import Scene from '../viz/Scene.jsx';
-import CoilMesh from '../viz/CoilMesh.jsx';
-import CurrentArrows from '../viz/CurrentArrows.jsx';
-import FieldLines from '../viz/FieldLines.jsx';
-import InjectionMarker from '../viz/InjectionMarker.jsx';
-import ParticleTraces from '../viz/ParticleTraces.jsx';
-import ControlPanel from '../components/ControlPanel.jsx';
-import InjectionPanel from '../components/InjectionPanel.jsx';
-import useStore from '../store/useStore.js';
-import { ITER_TOROIDAL } from '../store/useStore.js';
-import { toroidalSet } from '../physics/coils.js';
-import { fieldAtPoint } from '../physics/biotSavart.js';
-import { traceFieldlines } from '../physics/fieldlines.js';
-import { useParticleInjection } from '../hooks/useParticleInjection.js';
+import Scene from '../viz/Scene';
+import CoilMesh from '../viz/CoilMesh';
+import CurrentArrows from '../viz/CurrentArrows';
+import FieldLines from '../viz/FieldLines';
+import InjectionMarker from '../viz/InjectionMarker';
+import ParticleTraces from '../viz/ParticleTraces';
+import ControlPanel from '../components/ControlPanel';
+import InjectionPanel from '../components/InjectionPanel';
+import useStore, { ITER_TOROIDAL } from '../store/useStore';
+import { toroidalSet } from '../physics/coils';
+import { fieldAtPoint } from '../physics/biotSavart';
+import { traceFieldlines, type BFunc } from '../physics/fieldlines';
+import { useParticleInjection } from '../hooks/useParticleInjection';
 
 export default function ToroidalField() {
   const { t } = useTranslation();
   const { params, setParam, setParams, resetParams } = useStore();
   const { N, R0, a, current, n, numLines, traceLength } = params.toroidal;
   const [computing, setComputing] = useState(false);
-  const [fieldLines, setFieldLines] = useState([]);
-  const controlsRef = useRef();
-  const cameraRef = useRef();
+  const [fieldLines, setFieldLines] = useState<Float32Array[]>([]);
+  const controlsRef = useRef<{ reset?: () => void } | null>(null);
+  const cameraRef = useRef<THREE.Camera | null>(null);
 
   const coils = useMemo(() => toroidalSet({ N, R0, a, n, current }), [N, R0, a, n, current]);
 
-  const bFunc = useMemo(
+  const bFunc = useMemo<BFunc>(
     () => (x) => fieldAtPoint(x, coils.midpoints, coils.weightedDl),
-    [coils]
+    [coils],
   );
 
   const injection = useParticleInjection(bFunc);
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
+    const timeoutId = window.setTimeout(() => {
       setComputing(true);
 
-      const seeds = [];
+      const seeds: Float32Array[] = [];
       for (let i = 0; i < numLines; i += 1) {
         const r = R0 + (i / (numLines - 1 || 1) - 0.5) * a * 1.2;
         seeds.push(new Float32Array([r, 0, 0]));
@@ -48,24 +47,24 @@ export default function ToroidalField() {
       setComputing(false);
     }, 10);
 
-    return () => clearTimeout(timeoutId);
+    return () => window.clearTimeout(timeoutId);
   }, [bFunc, numLines, traceLength, R0, a]);
 
-  const colormap = (value) => new THREE.Color().setHSL(0.55 + value * 0.15, 0.9, 0.5);
+  const colormap = (value: number): THREE.Color => new THREE.Color().setHSL(0.55 + value * 0.15, 0.9, 0.5);
 
   const controls = [
-    { key: 'N',          label: t('controls.numCoils'),    step: 1,       value: N,       hint: '4 – 32' },
-    { key: 'R0',         label: t('controls.radius'),      step: 0.1,     value: R0,      hint: 'm  (ITER: 6.2)' },
-    { key: 'a',          label: t('controls.minorRadius'), step: 0.05,    value: a,       hint: 'm  (ITER: 2.0)' },
-    { key: 'current',    label: t('controls.current'),     step: 1000,    value: current, hint: 'A  (ITER: ~9 MA)' },
-    { key: 'numLines',   label: t('controls.numFieldLines'), step: 1,     value: numLines, hint: '0 – 10' },
-    { key: 'traceLength',label: t('controls.traceLength'), step: 1,       value: traceLength, hint: 'arc-length along field line; one toroidal wrap ≈ 2πR₀' },
+    { key: 'N',           label: t('controls.numCoils'),      step: 1,    value: N,           hint: '4 – 32' },
+    { key: 'R0',          label: t('controls.radius'),        step: 0.1,  value: R0,          hint: 'm  (ITER: 6.2)' },
+    { key: 'a',           label: t('controls.minorRadius'),   step: 0.05, value: a,           hint: 'm  (ITER: 2.0)' },
+    { key: 'current',     label: t('controls.current'),       step: 1000, value: current,     hint: 'A  (ITER: ~9 MA)' },
+    { key: 'numLines',    label: t('controls.numFieldLines'), step: 1,    value: numLines,    hint: '0 – 10' },
+    { key: 'traceLength', label: t('controls.traceLength'),   step: 1,    value: traceLength, hint: 'arc-length along field line; one toroidal wrap ≈ 2πR₀' },
   ];
 
   const coilMeshes = useMemo(() => {
     const midpoints = coils.midpoints;
-    const perCoil = midpoints.length / 3 / N;
-    const meshes = [];
+    const perCoil = midpoints.length / (3 * N);
+    const meshes: Float32Array[] = [];
     for (let i = 0; i < N; i += 1) {
       meshes.push(midpoints.slice(i * perCoil * 3, (i + 1) * perCoil * 3));
     }
@@ -74,8 +73,8 @@ export default function ToroidalField() {
 
   const coilWeightedDls = useMemo(() => {
     const weightedDl = coils.weightedDl;
-    const perCoil = weightedDl.length / 3 / N;
-    const result = [];
+    const perCoil = weightedDl.length / (3 * N);
+    const result: Float32Array[] = [];
     for (let i = 0; i < N; i += 1) {
       result.push(weightedDl.slice(i * perCoil * 3, (i + 1) * perCoil * 3));
     }
@@ -85,9 +84,13 @@ export default function ToroidalField() {
   return (
     <div className="lesson-layout">
       <div className="scene-area">
-        <Scene cameraPosition={[2.5, 1.5, 2.5]} controlsRef={controlsRef} cameraRef={cameraRef}
-               injectionMode={injection.injectionMode}
-               onInject={(cam) => injection.injectAt(cam)}>
+        <Scene
+          cameraPosition={[2.5, 1.5, 2.5]}
+          controlsRef={controlsRef}
+          cameraRef={cameraRef}
+          injectionMode={injection.injectionMode}
+          onInject={(cam) => injection.injectAt(cam)}
+        >
           {coilMeshes.map((midpoints, index) => (
             <group key={index}>
               <CoilMesh
@@ -130,8 +133,10 @@ export default function ToroidalField() {
           onInject={() => injection.injectAt(cameraRef.current)}
           onClear={injection.clearParticles}
           particleCount={injection.particles.length}
-          speciesId={injection.speciesId} onSpeciesId={injection.setSpeciesId}
-          energyEV={injection.energyEV}   onEnergyEV={injection.setEnergyEV}
+          speciesId={injection.speciesId}
+          onSpeciesId={injection.setSpeciesId}
+          energyEV={injection.energyEV}
+          onEnergyEV={injection.setEnergyEV}
         />
         <p className="description">{t('descriptions.toroidal')}</p>
       </div>

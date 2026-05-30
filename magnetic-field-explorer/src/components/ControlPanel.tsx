@@ -1,3 +1,26 @@
+import type { ChangeEvent, ReactNode } from 'react';
+
+interface ControlConfig {
+  key: string;
+  label: string;
+  step?: number;
+  value: number;
+  decimals?: number;
+  hint?: string;
+  min?: number;
+  max?: number;
+}
+
+interface ControlPanelProps {
+  controls?: ControlConfig[];
+  onChange?: (key: string, value: number) => void;
+  onReset?: () => void;
+  onCompute?: () => void;
+  computing?: boolean;
+  children?: ReactNode;
+  extraButtons?: ReactNode;
+}
+
 /**
  * Reusable control panel sidebar.
  * controls: array of { key, label, step, value, decimals, hint }
@@ -8,7 +31,20 @@
  * computing: bool
  * extraButtons: optional JSX rendered inside the control-actions row (e.g. ITER preset)
  */
-export default function ControlPanel({ controls = [], onChange, onReset, onCompute, computing = false, children, extraButtons }) {
+export default function ControlPanel({
+  controls = [],
+  onChange,
+  onReset,
+  onCompute,
+  computing = false,
+  children,
+  extraButtons,
+}: ControlPanelProps) {
+  const handleChange = (key: string) => (e: ChangeEvent<HTMLInputElement>) => {
+    const v = parseFloat(e.target.value);
+    if (!Number.isNaN(v)) onChange?.(key, v);
+  };
+
   return (
     <aside className="control-panel">
       {controls.map(({ key, label, step = 1, value, decimals = 2, hint }) => (
@@ -20,11 +56,9 @@ export default function ControlPanel({ controls = [], onChange, onReset, onCompu
             type="number"
             step={step}
             value={typeof value === 'number' ? value : ''}
-            onChange={(e) => {
-              const v = parseFloat(e.target.value);
-              if (!isNaN(v)) onChange(key, v);
-            }}
+            onChange={handleChange(key)}
             className="number-input"
+            data-decimals={decimals}
           />
           {hint && <span className="control-hint">{hint}</span>}
         </div>

@@ -1,6 +1,6 @@
 import { vi, describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import InjectionPanel from '../InjectionPanel.jsx';
+import InjectionPanel from '../InjectionPanel';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({

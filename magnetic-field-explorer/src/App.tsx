@@ -1,9 +1,8 @@
+import type { ComponentType } from 'react';
 import { useTranslation } from 'react-i18next';
 import useStore from './store/useStore';
 import LessonNav from './components/LessonNav';
 import LanguageToggle from './components/LanguageToggle';
-
-// Lesson components loaded eagerly (bundle is self-contained)
 import HomePage from './lessons/HomePage';
 import SingleLoop from './lessons/SingleLoop';
 import HelmholtzCoils from './lessons/HelmholtzCoils';
@@ -11,7 +10,7 @@ import ToroidalField from './lessons/ToroidalField';
 import TokamakField from './lessons/TokamakField';
 import GradientField from './lessons/GradientField';
 
-const LESSONS = {
+const LESSONS: Record<string, ComponentType> = {
   home: HomePage,
   singleLoop: SingleLoop,
   helmholtz: HelmholtzCoils,
@@ -36,15 +35,11 @@ export default function App() {
           </div>
         </div>
         <div className="header-right">
-          <span className="backend-badge" title={t('info.tfBackend')}>
-            ⚡ {tfBackend}
-          </span>
+          <span className="backend-badge" title={t('info.tfBackend')}>⚡ {tfBackend}</span>
           <LanguageToggle />
         </div>
       </header>
-
       <LessonNav />
-
       <main className="lesson-main">
         {LessonComponent && <LessonComponent />}
       </main>

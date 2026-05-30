@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { traceFieldline, traceFieldlines, trajToPoints } from '../fieldlines.js';
+import { traceFieldline, traceFieldlines, trajToPoints } from '../fieldlines';
 
 type BFunc = (x: number[]) => number[];
 

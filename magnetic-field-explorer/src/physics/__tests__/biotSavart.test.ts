@@ -21,9 +21,9 @@ vi.mock('@tensorflow/tfjs', () => ({
   concat: vi.fn().mockReturnValue({ dataSync: vi.fn().mockReturnValue(new Float32Array()) }),
 }));
 
-import { fieldAtPoint } from '../biotSavart.js';
-import { circularLoop } from '../coils.js';
-import { MU0_OVER_4PI } from '../units.js';
+import { fieldAtPoint } from '../biotSavart';
+import { circularLoop } from '../coils';
+import { MU0_OVER_4PI } from '../units';
 
 // Analytic on-axis field of a circular loop:
 //   Bz(z) = (μ₀/4π) · 2π I a² / (a² + z²)^(3/2)

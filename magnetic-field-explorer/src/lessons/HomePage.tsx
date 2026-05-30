@@ -1,31 +1,42 @@
 import { useTranslation } from 'react-i18next';
-import useStore from '../store/useStore.js';
+import useStore from '../store/useStore';
 
-const LESSONS = [
+const LESSONS: Array<{ id: string; icon: string }> = [
   { id: 'singleLoop', icon: '⭕' },
   { id: 'helmholtz',  icon: '🔵' },
   { id: 'toroidal',   icon: '🍩' },
-  { id: 'tokamak',    icon: '⚛'  },
-  { id: 'gradient',   icon: '∇'  },
+  { id: 'tokamak',    icon: '⚛' },
+  { id: 'gradient',   icon: '∇' },
 ];
 
-const NAV_MODES = [
+interface NavModeKey {
+  glyphs: string[];
+  label: string;
+}
+
+interface NavMode {
+  key: string;
+  icon: string;
+  keys: NavModeKey[];
+}
+
+const NAV_MODES: NavMode[] = [
   {
-    key:   'fieldReview',
-    icon:  '🖱️',
-    keys:  [
-      { glyphs: ['drag'],   label: 'home.nav.fieldReview.drag' },
+    key: 'fieldReview',
+    icon: '🖱️',
+    keys: [
+      { glyphs: ['drag'], label: 'home.nav.fieldReview.drag' },
       { glyphs: ['scroll'], label: 'home.nav.fieldReview.scroll' },
       { glyphs: ['R-drag'], label: 'home.nav.fieldReview.pan' },
     ],
   },
   {
-    key:   'injection',
-    icon:  '💉',
-    keys:  [
-      { glyphs: ['W', 'A', 'S', 'D'],   label: 'home.nav.injection.wasd' },
-      { glyphs: ['↑', '↓', '←', '→'],   label: 'home.nav.injection.arrows' },
-      { glyphs: ['Space'],               label: 'home.nav.injection.space' },
+    key: 'injection',
+    icon: '💉',
+    keys: [
+      { glyphs: ['W', 'A', 'S', 'D'], label: 'home.nav.injection.wasd' },
+      { glyphs: ['↑', '↓', '←', '→'], label: 'home.nav.injection.arrows' },
+      { glyphs: ['Space'], label: 'home.nav.injection.space' },
     ],
   },
 ];
@@ -36,7 +47,6 @@ export default function HomePage() {
 
   return (
     <div className="home-page">
-
       <div className="home-hero">
         <h2 className="home-title">{t('home.title')}</h2>
         <p className="home-subtitle">{t('home.subtitle')}</p>
@@ -69,7 +79,7 @@ export default function HomePage() {
                 {keys.map(({ glyphs, label }) => (
                   <li key={label} className="home-nav-key-row">
                     <span className="home-nav-glyphs">
-                      {glyphs.map(g => <kbd key={g}>{g}</kbd>)}
+                      {glyphs.map((glyph) => <kbd key={glyph}>{glyph}</kbd>)}
                     </span>
                     <span className="home-nav-key-label">{t(label)}</span>
                   </li>
@@ -79,7 +89,6 @@ export default function HomePage() {
           ))}
         </div>
       </section>
-
     </div>
   );
 }

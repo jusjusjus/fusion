@@ -1,18 +1,15 @@
 import { useRef, useEffect, useMemo } from 'react';
 import * as THREE from 'three';
 
-/**
- * Renders a set of cone arrows evenly spaced around a coil wire,
- * pointing in the direction of current flow (derived from weightedDl tangents).
- *
- * Props:
- *   midpoints   Float32Array(N*3)  - segment midpoint positions
- *   weightedDl  Float32Array(N*3)  - segment tangent × current (direction sign encodes current polarity)
- *   color       string             - arrow color
- *   nArrows     number             - how many arrows to show
- *   coneRadius  number             - cone base radius (world units)
- *   coneHeight  number             - cone height (world units)
- */
+interface CurrentArrowsProps {
+  midpoints: Float32Array;
+  weightedDl: Float32Array;
+  color?: string;
+  nArrows?: number;
+  coneRadius?: number;
+  coneHeight?: number;
+}
+
 export default function CurrentArrows({
   midpoints,
   weightedDl,
@@ -20,15 +17,9 @@ export default function CurrentArrows({
   nArrows = 8,
   coneRadius = 0.006,
   coneHeight = 0.018,
-}) {
-  const meshRef = useRef();
-
-  // Shared geometry (cone pointing along +Y by default in Three.js)
-  const geometry = useMemo(
-    () => new THREE.ConeGeometry(coneRadius, coneHeight, 10),
-    [coneRadius, coneHeight]
-  );
-
+}: CurrentArrowsProps) {
+  const meshRef = useRef<THREE.InstancedMesh | null>(null);
+  const geometry = useMemo(() => new THREE.ConeGeometry(coneRadius, coneHeight, 10), [coneRadius, coneHeight]);
   const UP = useMemo(() => new THREE.Vector3(0, 1, 0), []);
 
   useEffect(() => {
@@ -49,14 +40,15 @@ export default function CurrentArrows({
       const i = Math.floor(a * step) % N;
       pos.set(midpoints[i * 3], midpoints[i * 3 + 1], midpoints[i * 3 + 2]);
 
-      const dx = weightedDl[i * 3], dy = weightedDl[i * 3 + 1], dz = weightedDl[i * 3 + 2];
+      const dx = weightedDl[i * 3];
+      const dy = weightedDl[i * 3 + 1];
+      const dz = weightedDl[i * 3 + 2];
       const len = Math.sqrt(dx * dx + dy * dy + dz * dz);
       if (len < 1e-10) continue;
 
       dir.set(dx / len, dy / len, dz / len);
-      // Avoid degenerate rotation when dir is anti-parallel to UP
       if (dir.dot(UP) < -0.9999) {
-        quat.set(1, 0, 0, 0); // 180° around X
+        quat.set(1, 0, 0, 0);
       } else {
         quat.setFromUnitVectors(UP, dir);
       }
@@ -67,7 +59,7 @@ export default function CurrentArrows({
   }, [midpoints, weightedDl, nArrows, UP]);
 
   return (
-    <instancedMesh ref={meshRef} args={[geometry, null, nArrows]}>
+    <instancedMesh ref={meshRef} args={[geometry, undefined, nArrows]}>
       <meshStandardMaterial color={color} roughness={0.3} metalness={0.4} />
     </instancedMesh>
   );

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { PARTICLES, E_CHARGE, speedFromEV } from '../particles.js';
+import { PARTICLES, E_CHARGE, speedFromEV } from '../particles';
 
 describe('E_CHARGE', () => {
   it('equals the CODATA 2018 elementary charge in Coulombs', () => {
