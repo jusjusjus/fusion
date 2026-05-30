@@ -59,7 +59,7 @@ export default function ToroidalField() {
     { key: 'a',          label: t('controls.minorRadius'), step: 0.05,    value: a,       hint: 'm  (ITER: 2.0)' },
     { key: 'current',    label: t('controls.current'),     step: 1000,    value: current, hint: 'A  (ITER: ~9 MA)' },
     { key: 'numLines',   label: t('controls.numFieldLines'), step: 1,     value: numLines, hint: '0 – 10' },
-    { key: 'traceLength',label: t('controls.traceLength'), step: 1,       value: traceLength, hint: 'field-line wraps' },
+    { key: 'traceLength',label: t('controls.traceLength'), step: 1,       value: traceLength, hint: 'arc-length along field line; one toroidal wrap ≈ 2πR₀' },
   ];
 
   const coilMeshes = useMemo(() => {
@@ -85,7 +85,7 @@ export default function ToroidalField() {
   return (
     <div className="lesson-layout">
       <div className="scene-area">
-        <Scene cameraPosition={[0.6, 0.4, 0.6]} controlsRef={controlsRef} cameraRef={cameraRef}
+        <Scene cameraPosition={[2.5, 1.5, 2.5]} controlsRef={controlsRef} cameraRef={cameraRef}
                injectionMode={injection.injectionMode}
                onInject={(cam) => injection.injectAt(cam)}>
           {coilMeshes.map((midpoints, index) => (

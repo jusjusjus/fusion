@@ -73,7 +73,7 @@ export default function GradientField() {
     {
       key: 'traceLength',
       label: t('controls.traceLength'),
-      min: 0.2, max: 2, step: 0.1, decimals: 1, value: traceLength,
+      step: 0.1, value: traceLength, hint: 'arc-length along field line',
     },
   ];
 

@@ -2,6 +2,7 @@
   "appTitle": "Magnetic Field Explorer",
   "appSubtitle": "Learn how electric coils shape magnetic fields",
   "lessons": {
+    "home": "Home",
     "singleLoop": "Single Loop",
     "helmholtz": "Helmholtz Coils",
     "toroidal": "Toroidal Field",
@@ -15,7 +16,7 @@
     "numCoils": "No. of Coils",
     "minorRadius": "Minor Radius (m)",
     "numFieldLines": "Field Lines",
-    "traceLength": "Trace Length",
+    "traceLength": "Trace Length (m)",
     "plasmaCurrent": "Plasma current Iₚ (A)",
     "baseField": "Base field B₀ (T)",
     "gradient": "Gradient α (T/m)",
@@ -40,14 +41,42 @@
     "configNormal": "⚙ Helmholtz",
     "configAnti": "⚙ Anti-Helmholtz"
   },
+  "home": {
+    "title": "Welcome to Magnetic Field Explorer",
+    "subtitle": "Choose a lesson below to explore how electric currents shape magnetic fields.",
+    "cards": {
+      "singleLoop": "The Biot-Savart field of a single circular loop — the building block of every coil geometry. Field lines form closed dipole loops; on-axis strength is plotted in real time.",
+      "helmholtz": "Two coaxial loops in Helmholtz configuration produce a highly uniform field between them. Flip one current to switch to the anti-Helmholtz (magnetic mirror) arrangement.",
+      "toroidal": "N coils arranged around a torus create a toroidal field (B ∝ 1/R). Curvature and gradient drifts prevent confinement by a toroidal field alone — the motivation for adding a poloidal component.",
+      "tokamak": "Toroidal coils plus a plasma current Iₚ generate a poloidal field that twists the field lines into helices. Adjust the ITER preset to explore reactor-scale geometry and keV particle orbits.",
+      "gradient": "A model field Bz(x) = B₀ + α·x² + β·x⁴ along z. The transverse gradient drives injected particles to precess in y — illustrating gradient drift without solving the full Maxwell equations."
+    },
+    "nav": {
+      "title": "How to navigate",
+      "fieldReview": {
+        "title": "Field-review mode",
+        "desc": "The default mode. Inspect field lines and coil geometry by orbiting around the scene with your mouse.",
+        "drag":   "Rotate",
+        "scroll": "Zoom",
+        "pan":    "Pan"
+      },
+      "injection": {
+        "title": "Particle-injection mode",
+        "desc": "Activated via the \"Enable\" button in the Injection panel. Fly through the field in first-person and fire particles.",
+        "wasd":   "Fly forward / back / left / right",
+        "arrows": "Look around (pitch & yaw)",
+        "space":  "Inject a particle in the current view direction"
+      }
+    }
+  },
   "descriptions": {
-    "singleLoop": "A single circular current loop produces a dipole-like magnetic field. The field lines form closed loops threading through the coil. On the axis, the field falls off as 1/(a²+z²)^(3/2).",
-    "helmholtz": "Two coaxial coils separated by their radius create a remarkably uniform field region between them — the Helmholtz configuration. Widely used in laboratory setups to cancel the Earth's field.",
-    "antiHelmholtz": "With the lower coil's current reversed the two coils repel each other's flux, creating an anti-Helmholtz (magnetic mirror) configuration. The field is zero at the midplane and strong at each coil — useful for trapping particles.",
-    "toroidal": "Arranging N coils symmetrically around a torus creates a toroidal magnetic field. Charged particles can be confined in such a geometry — the basis of tokamak and stellarator fusion reactors.",
-    "tokamak": "Adds a central plasma current Iₚ to the toroidal coil field. The current flows in the toroidal (φ) direction; by Ampère's law it induces a poloidal field that wraps around the minor cross-section. Together the toroidal and poloidal components create helical field lines — the hallmark of tokamak confinement. The rotational transform ι (field-line winding number) is set by the ratio of poloidal to toroidal field strength.",
-    "gradient": "A physically self-consistent linear gradient field. Bz = B0 + α·x at z=0, with the required Bx = α·z component enforced by ∇×B = 0 (Faraday's law). The field satisfies both ∇·B = 0 and ∇×B = 0 everywhere. A charged particle gyrates around the z-axis while drifting in the y-direction due to the gradient force: v_drift = (mv⊥²/2q)·α/B².",
-    "helicalSheet": "A radial line of starting points is advected along field lines. The rotational transform iota(r) ∝ r causes outer lines to wind faster, shearing the initial straight line into a helical sheet."
+    "singleLoop": "A single circular current loop produces a dipole-like magnetic field. Field lines form closed loops threading through the coil. On axis: Bz = μ₀Ia²/[2(a²+z²)^(3/2)], peaking at the centre and falling as z⁻³ far away.",
+    "helmholtz": "Two coaxial coils of radius R separated by distance R (the Helmholtz condition) produce a remarkably uniform field in the region between them. Widely used in laboratories to cancel the Earth's magnetic field or provide a controlled background.",
+    "antiHelmholtz": "Reversing one coil current creates a magnetic mirror: the field vanishes at the midplane and strengthens near each coil. The resulting ∇B reflects charged particles back from both ends — the basic trapping mechanism in mirror-machine fusion concepts.",
+    "toroidal": "N coils arranged symmetrically around a torus produce a toroidal field with B ∝ 1/R (strongest at the inner edge). Curvature and gradient drifts cause particles to drift vertically and escape — the reason a pure toroidal field cannot confine a plasma, and the motivation for adding a poloidal component in a tokamak.",
+    "tokamak": "A plasma current Iₚ flowing toroidally induces a poloidal field around the minor cross-section (Ampère: Bθ ≈ μ₀Iₚ/2πr). Combined with the toroidal coil field, this twists field lines into helices that close on themselves, providing confinement. The rotational transform ι = Bθ R₀/(Bφ r) sets how many poloidal turns a field line makes per toroidal circuit.",
+    "gradient": "A model field Bz(x) = B₀ + α·x² + β·x⁴ pointing purely along z — even in x, so x = 0 is always a field extremum. Because Bx = By = 0 everywhere, ∇×B ≠ 0 and this is not a physical vacuum field. It is a pedagogical tool: the transverse ∇Bz drives gradient drift, causing injected particles to precess in the y-direction.",
+    "helicalSheet": "A radial line of starting points is advected along field lines. The rotational transform ι(r) ∝ r causes outer lines to wind faster, shearing the initial straight line into a helical sheet."
   },
   "charts": {
     "bzOnAxis": "Bz on axis",

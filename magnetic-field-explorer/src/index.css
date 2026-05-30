@@ -106,7 +106,173 @@ body {
 .lesson-main {
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  overflow: auto;
+}
+
+/* ── Home Page ────────────────────────────────────────────────── */
+.home-page {
+  height: 100%;
+  overflow-y: auto;
+  padding: 2rem 2.5rem 3rem;
+  box-sizing: border-box;
+}
+
+.home-hero {
+  margin-bottom: 2rem;
+}
+
+.home-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 0.4rem;
+}
+
+.home-subtitle {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* Lesson cards */
+.home-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.home-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  padding: 1.1rem 1.2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  color: var(--text);
+}
+
+.home-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.home-card-icon { font-size: 1.8rem; line-height: 1; }
+
+.home-card-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text);
+}
+
+.home-card-desc {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.45;
+  flex: 1;
+}
+
+.home-card-cta {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-top: 0.3rem;
+}
+
+/* Navigation section */
+.home-nav-section {
+  border-top: 1px solid var(--border);
+  padding-top: 1.5rem;
+}
+
+.home-nav-heading {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 1rem;
+}
+
+.home-nav-modes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.home-nav-mode {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+}
+
+.home-nav-mode-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  margin-bottom: 0.8rem;
+}
+
+.home-nav-mode-icon { font-size: 1.5rem; line-height: 1; flex-shrink: 0; margin-top: 2px; }
+
+.home-nav-mode-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 0.2rem;
+}
+
+.home-nav-mode-desc {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.home-nav-keys {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.home-nav-key-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.home-nav-glyphs {
+  display: flex;
+  gap: 3px;
+  flex-shrink: 0;
+  min-width: 100px;
+}
+
+kbd {
+  display: inline-block;
+  padding: 2px 6px;
+  font-size: 0.7rem;
+  font-family: inherit;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.home-nav-key-label {
+  font-size: 0.76rem;
+  color: var(--muted);
 }
 
 .lesson-layout {

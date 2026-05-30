@@ -16,7 +16,7 @@ export const ITER_TOROIDAL = { N: 18, R0: 6.2, a: 2.0, current: 500000, n: 200, 
 export const ITER_TOKAMAK  = { ...ITER_TOROIDAL, Icentral: 2000000, traceLength: 12 };
 
 const useStore = create((set) => ({
-  activeLesson: 'gradient',
+  activeLesson: 'home',
   setActiveLesson: (id) => set({ activeLesson: id }),
 
   tfBackend: 'initializing',

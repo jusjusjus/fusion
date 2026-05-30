@@ -4,6 +4,7 @@ import LessonNav from './components/LessonNav';
 import LanguageToggle from './components/LanguageToggle';
 
 // Lesson components loaded eagerly (bundle is self-contained)
+import HomePage from './lessons/HomePage';
 import SingleLoop from './lessons/SingleLoop';
 import HelmholtzCoils from './lessons/HelmholtzCoils';
 import ToroidalField from './lessons/ToroidalField';
@@ -11,11 +12,12 @@ import TokamakField from './lessons/TokamakField';
 import GradientField from './lessons/GradientField';
 
 const LESSONS = {
-  gradient: GradientField,
+  home: HomePage,
   singleLoop: SingleLoop,
   helmholtz: HelmholtzCoils,
   toroidal: ToroidalField,
   tokamak: TokamakField,
+  gradient: GradientField,
 };
 
 export default function App() {

@@ -2,6 +2,7 @@
   "appTitle": "Magnetfeld-Explorer",
   "appSubtitle": "Lerne, wie elektrische Spulen Magnetfelder formen",
   "lessons": {
+    "home": "Start",
     "singleLoop": "Einzelne Leiterschleife",
     "helmholtz": "Helmholtz-Spulen",
     "toroidal": "Toroidales Feld",
@@ -15,7 +16,7 @@
     "numCoils": "Anzahl Spulen",
     "minorRadius": "Kleiner Radius (m)",
     "numFieldLines": "Feldlinien",
-    "traceLength": "Spurlänge",
+    "traceLength": "Spurlänge (m)",
     "plasmaCurrent": "Plasmastrom Iₚ (A)",
     "baseField": "Grundfeld B₀ (T)",
     "gradient": "Gradient α (T/m)",
@@ -40,14 +41,42 @@
     "configNormal": "⚙ Helmholtz",
     "configAnti": "⚙ Anti-Helmholtz"
   },
+  "home": {
+    "title": "Willkommen beim Magnetfeld-Explorer",
+    "subtitle": "Wähle unten eine Lektion, um zu erkunden, wie elektrische Ströme Magnetfelder formen.",
+    "cards": {
+      "singleLoop": "Das Biot-Savart-Feld einer einzelnen Leiterschleife — Grundbaustein jeder Spulengeometrie. Feldlinien bilden geschlossene Dipolschleifen; die Achsenstärke wird in Echtzeit angezeigt.",
+      "helmholtz": "Zwei koaxiale Leiterschleifen in Helmholtz-Konfiguration erzeugen ein sehr homogenes Feld. Strom umkehren → Anti-Helmholtz (Magnetspiegelkonfiguration).",
+      "toroidal": "N Spulen um einen Torus erzeugen ein toroidales Feld (B ∝ 1/R). Krümmungs- und Gradientendrift verhindern den Einschluss durch ein reines Toroidalfeld — Motivation für die poloidale Komponente.",
+      "tokamak": "Toroidalspulen und Plasmastrom Iₚ erzeugen ein poloidales Feld, das die Feldlinien zu Helices dreht. Mit dem ITER-Preset lassen sich reaktorskalige Geometrie und keV-Teilchenbahnen erkunden.",
+      "gradient": "Ein Modellfeld Bz(x) = B₀ + α·x² + β·x⁴ entlang z. Der transversale Gradient treibt injizierte Teilchen in y — Gradientendrift, ohne die vollen Maxwell-Gleichungen zu lösen."
+    },
+    "nav": {
+      "title": "Navigation",
+      "fieldReview": {
+        "title": "Feldansicht-Modus",
+        "desc": "Standard-Modus. Feldlinien und Spulengeometrie durch Drehen, Zoomen und Verschieben erkunden.",
+        "drag":   "Drehen",
+        "scroll": "Zoomen",
+        "pan":    "Verschieben"
+      },
+      "injection": {
+        "title": "Teilcheninjektion-Modus",
+        "desc": "Wird über die Schaltfläche \"Aktivieren\" im Injektionspanel gestartet. Ich-Perspektive — durch das Feld fliegen und Teilchen abfeuern.",
+        "wasd":   "Vorwärts / zurück / links / rechts fliegen",
+        "arrows": "Umsehen (Nicken & Gieren)",
+        "space":  "Teilchen in Blickrichtung injizieren"
+      }
+    }
+  },
   "descriptions": {
-    "singleLoop": "Eine einzelne kreisförmige Leiterschleife erzeugt ein dipolartiges Magnetfeld. Die Feldlinien bilden geschlossene Schleifen durch die Spule. Auf der Achse fällt das Feld wie 1/(a²+z²)^(3/2) ab.",
-    "helmholtz": "Zwei koaxiale Spulen im Abstand ihres Radius erzeugen ein bemerkenswert homogenes Feld dazwischen – die Helmholtz-Konfiguration. Häufig in Laboren eingesetzt, um das Erdmagnetfeld zu kompensieren.",
-    "antiHelmholtz": "Mit umgekehrtem Strom in der unteren Spule stoßen sich die Flüsse gegenseitig ab und bilden eine Anti-Helmholtz- (Magnetspiegelkonfiguration). Das Feld ist in der Mitte null und stark an jeder Spule – nützlich zum Einfangen von Teilchen.",
-    "toroidal": "N symmetrisch um einen Torus angeordnete Spulen erzeugen ein toroidales Magnetfeld. Geladene Teilchen können in dieser Geometrie eingeschlossen werden – die Grundlage von Tokamak- und Stellarator-Fusionsreaktoren.",
-    "tokamak": "Fügt dem toroidalen Spulenfeld einen zentralen Plasmastrom Iₚ hinzu. Der Strom fließt in toroidaler (φ-)Richtung; nach dem Ampèreschen Gesetz induziert er ein poloidales Feld, das sich um den kleinen Querschnitt wickelt. Zusammen erzeugen toroidale und poloidale Komponenten helikale Feldlinien – das Merkmal des Tokamak-Einschlusses. Der Rotationstransform ι (Feldlinienwindungszahl) wird durch das Verhältnis von poloidaler zu toroidaler Feldstärke bestimmt.",
-    "gradient": "Ein physikalisch konsistentes lineares Gradientenfeld. Bz = B0 + α·x bei z=0, mit der notwendigen Komponente Bx = α·z, die durch ∇×B = 0 (Faradaysches Gesetz) erzwungen wird. Das Feld erfüllt ∇·B = 0 und ∇×B = 0 überall. Ein geladenes Teilchen kreist um die z-Achse und driftet gleichzeitig in y-Richtung: v_drift = (mv⊥²/2q)·α/B².",
-    "helicalSheet": "Eine radiale Linie von Startpunkten wird entlang der Feldlinien advektiert. Der Rotationstransform iota(r) ∝ r bewirkt, dass äußere Linien schneller winden und die Gerade in eine helikale Fläche verformt wird."
+    "singleLoop": "Eine einzelne kreisförmige Leiterschleife erzeugt ein dipolartiges Magnetfeld. Feldlinien bilden geschlossene Schleifen durch die Spule. Auf der Achse: Bz = μ₀Ia²/[2(a²+z²)^(3/2)], Maximum im Zentrum, Abfall wie z⁻³ in der Ferne.",
+    "helmholtz": "Zwei koaxiale Spulen mit Radius R im Abstand R (Helmholtz-Bedingung) erzeugen ein bemerkenswertes homogenes Feld dazwischen. Häufig genutzt, um das Erdmagnetfeld im Labor zu kompensieren oder ein kontrollierbares Hintergrundfeld bereitzustellen.",
+    "antiHelmholtz": "Das Umkehren des Stroms in einer Spule erzeugt einen Magnetspiegel: das Feld ist in der Mittelebene null und stark an den Spulen. Das resultierende ∇B reflektiert geladene Teilchen von beiden Enden — der Grundmechanismus des Magnetspiegeleinschlusses.",
+    "toroidal": "N symmetrisch um einen Torus angeordnete Spulen erzeugen ein toroidales Feld mit B ∝ 1/R (stärker an der Innenseite). Krümmungs- und Gradientendrift lassen Teilchen vertikal driften und entweichen — weshalb ein reines Toroidalfeld kein Plasma einschließen kann und ein poloidales Feld benötigt wird.",
+    "tokamak": "Ein toroidal fließender Plasmastrom Iₚ induziert ein poloidales Feld (Ampère: Bθ ≈ μ₀Iₚ/2πr). Zusammen mit dem Toroidalfeld entstehen helikale Feldlinien, die sich selbst schließen und Einschluss ermöglichen. Der Rotationstransform ι = Bθ R₀/(Bφ r) gibt an, wie viele poloidale Umläufe eine Feldlinie pro toroidalem Umlauf macht.",
+    "gradient": "Ein Modellfeld Bz(x) = B₀ + α·x² + β·x⁴, das rein in z zeigt — gerade in x, sodass x = 0 immer ein Feldextremum ist. Da Bx = By = 0 überall gilt, ist ∇×B ≠ 0 — kein physikalisches Vakuumfeld. Es dient als Lehrwerkzeug: das transversale ∇Bz treibt Gradientendrift, sodass injizierte Teilchen in y-Richtung präzessieren.",
+    "helicalSheet": "Eine radiale Linie von Startpunkten wird entlang der Feldlinien advektiert. Der Rotationstransform ι(r) ∝ r lässt äußere Linien schneller winden und verformt die gerade Linie in eine helikale Fläche."
   },
   "charts": {
     "bzOnAxis": "Bz auf der Achse",
