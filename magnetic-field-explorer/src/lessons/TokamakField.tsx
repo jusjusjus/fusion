@@ -56,7 +56,10 @@ export default function TokamakField() {
       setComputing(true);
       const seeds: Float32Array[] = [];
       for (let i = 0; i < numLines; i++) {
-        const r = R0 + (i / (numLines - 1 || 1) - 0.5) * a * 1.2;
+        // Offset by half a step when numLines is odd so no seed lands on r = R0
+        // (the plasma-current axis where poloidal field vanishes, giving a degenerate line).
+        const halfStep = numLines % 2 === 1 ? 0.5 / Math.max(numLines - 1, 1) : 0;
+        const r = R0 + (i / (numLines - 1 || 1) - 0.5 + halfStep) * a * 1.2;
         seeds.push(new Float32Array([r, 0, 0]));
       }
       const lines = traceFieldlines(seeds, bFunc, { length: traceLength, nsteps: 1200 });
