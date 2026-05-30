@@ -2,11 +2,11 @@ import { create } from 'zustand';
 
 // ── Lesson defaults (used for reset) ────────────────────────────────────────
 export const DEFAULTS = {
+  gradient:   { B0: 0.001, alpha: 0.05, beta: 0, numLines: 4, traceLength: 0.5 },
   singleLoop: { radius: 0.10, current: 1.0, n: 200 },
   helmholtz:  { radius: 0.10, separation: 0.10, current: 1.0, n: 200 },
   toroidal:   { N: 12, R0: 1.00, a: 0.30, current: 50,  n: 200, numLines: 5, traceLength: 8 },
   tokamak:    { N: 12, R0: 1.00, a: 0.30, current: 50,  Icentral: 200, n: 200, numLines: 5, traceLength: 12 },
-  gradient:   { B0: 0.001, alpha: 0.05, beta: 0, numLines: 4, traceLength: 0.5 },
 };
 
 // ── ITER-scale presets ───────────────────────────────────────────────────────
@@ -16,7 +16,7 @@ export const ITER_TOROIDAL = { N: 18, R0: 6.2, a: 2.0, current: 500000, n: 200, 
 export const ITER_TOKAMAK  = { ...ITER_TOROIDAL, Icentral: 2000000, traceLength: 12 };
 
 const useStore = create((set) => ({
-  activeLesson: 'singleLoop',
+  activeLesson: 'gradient',
   setActiveLesson: (id) => set({ activeLesson: id }),
 
   tfBackend: 'initializing',

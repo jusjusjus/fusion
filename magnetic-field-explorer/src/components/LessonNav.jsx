@@ -2,11 +2,11 @@ import { useTranslation } from 'react-i18next';
 import useStore from '../store/useStore';
 
 const LESSONS = [
+  { id: 'gradient', icon: '∇' },
   { id: 'singleLoop', icon: '⭕' },
   { id: 'helmholtz', icon: '🔵' },
   { id: 'toroidal', icon: '🍩' },
   { id: 'tokamak', icon: '⚛' },
-  { id: 'gradient', icon: '∇' },
 ];
 
 export default function LessonNav() {

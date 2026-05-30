@@ -11,11 +11,11 @@ import TokamakField from './lessons/TokamakField';
 import GradientField from './lessons/GradientField';
 
 const LESSONS = {
+  gradient: GradientField,
   singleLoop: SingleLoop,
   helmholtz: HelmholtzCoils,
   toroidal: ToroidalField,
   tokamak: TokamakField,
-  gradient: GradientField,
 };
 
 export default function App() {
