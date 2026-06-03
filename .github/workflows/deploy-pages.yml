@@ -49,6 +49,7 @@ jobs:
           cache-dependency-path: |
             landing-page/package-lock.json
             magnetic-field-explorer/package-lock.json
+            plasma-physics/package-lock.json
 
       - name: Install landing-page dependencies
         working-directory: landing-page
@@ -66,11 +67,20 @@ jobs:
         working-directory: magnetic-field-explorer
         run: npm run build
 
+      - name: Install plasma-physics dependencies
+        working-directory: plasma-physics
+        run: npm ci
+
+      - name: Build plasma-physics
+        working-directory: plasma-physics
+        run: npm run build
+
       - name: Merge build outputs
         run: |
           mkdir -p site
           cp -r landing-page/dist/. site/
           cp -r magnetic-field-explorer/dist/. site/
+          cp -r plasma-physics/dist/. site/
 
       - uses: actions/configure-pages@v5
 

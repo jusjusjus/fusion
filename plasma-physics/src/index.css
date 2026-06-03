@@ -1,0 +1,175 @@
+/* ── Design tokens ── */
+:root {
+  --bg:      #080d14;
+  --surface: #0d1520;
+  --border:  #1a2840;
+  --text:    #c8d8f0;
+  --muted:   #6080a0;
+  --accent:  #4dabf7;
+  --accent2: #74c0fc;
+  --danger:  #ff6b6b;
+  --success: #69db7c;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── App shell ── */
+.app { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+.app-header {
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+}
+.header-title { display: flex; align-items: center; gap: 12px; }
+.header-icon  { font-size: 1.6rem; }
+.back-link    { color: var(--muted); text-decoration: none; font-size: 0.85rem; }
+.back-link:hover { color: var(--accent); }
+.app-header h1   { font-size: 1.15rem; font-weight: 700; color: var(--text); }
+.app-subtitle    { font-size: 0.75rem; color: var(--muted); }
+
+/* ── Lesson nav ── */
+.lesson-nav {
+  display: flex;
+  gap: 2px;
+  padding: 4px 16px 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+.nav-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+}
+.nav-tab:hover  { color: var(--text); }
+.nav-tab--active { color: var(--accent); border-bottom-color: var(--accent); }
+.nav-tab-icon { font-size: 1rem; }
+
+/* ── Main area ── */
+.lesson-main { flex: 1; overflow: hidden; display: flex; }
+
+/* ── Lesson layout ── */
+.lesson-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.canvas-area {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+.canvas-area canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  width: 280px;
+  min-width: 240px;
+  max-width: 320px;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+/* ── Controls ── */
+.control-group { display: flex; flex-direction: column; gap: 10px; }
+.control-row   { display: flex; flex-direction: column; gap: 4px; }
+
+.control-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.control-value { color: var(--accent); font-family: monospace; }
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.btn {
+  padding: 7px 14px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.83rem;
+  transition: background 0.15s, border-color 0.15s;
+}
+.btn:hover          { background: rgba(77,171,247,0.08); border-color: var(--accent); }
+.btn--primary       { background: rgba(77,171,247,0.12); border-color: var(--accent); color: var(--accent); }
+.btn--primary:hover { background: rgba(77,171,247,0.22); }
+.btn--danger        { border-color: var(--danger); color: var(--danger); }
+.btn--danger:hover  { background: rgba(255,107,107,0.1); }
+
+.btn-row { display: flex; gap: 8px; }
+
+/* ── Info badge ── */
+.info-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(77,171,247,0.08);
+  border: 1px solid rgba(77,171,247,0.2);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  color: var(--accent2);
+}
+
+/* ── Description ── */
+.description {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.6;
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+}
+
+/* ── Section heading ── */
+.section-heading {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+/* ── Status bar ── */
+.status-bar {
+  font-size: 0.75rem;
+  color: var(--muted);
+  padding: 4px 0;
+}
+.status-bar span { color: var(--accent); font-family: monospace; }

@@ -19,6 +19,16 @@ const PROJECTS: Project[] = [
     tags: ['Biot–Savart', 'Tokamak', 'Boris integrator', 'Three.js'],
     available: true,
   },
+  {
+    title: 'Plasma Physics',
+    subtitle: 'Collective plasma dynamics',
+    description:
+      'Interactive simulations of collective plasma phenomena: Langmuir oscillations at the plasma frequency, the two-stream instability via 1D PIC, and Alfvén wave propagation in ideal MHD.',
+    href: '/fusion/plasma-physics/',
+    icon: '⚡',
+    tags: ['PIC', 'MHD', 'Plasma Oscillations', 'Alfvén Waves'],
+    available: true,
+  },
 ];
 
 function ProjectCard({ project }: { project: Project }) {
