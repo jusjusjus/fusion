@@ -29,6 +29,26 @@ const PROJECTS: Project[] = [
     tags: ['PIC', 'MHD', 'Plasma Oscillations', 'Alfvén Waves'],
     available: true,
   },
+  {
+    title: 'Fusion Reactions',
+    subtitle: 'Nuclear physics of thermonuclear reactions',
+    description:
+      'Explore fusion cross-sections σ(E) for D–T, D–D, and D–³He using Bosch-Hale parameterisation. Visualise thermal reactivity ⟨σv⟩(T), the Lawson ignition criterion, and Q values with binding-energy bar charts.',
+    href: '/fusion/fusion-reactions/',
+    icon: '⚛️',
+    tags: ['Bosch-Hale', 'Cross-sections', 'Reactivity', 'Q value'],
+    available: true,
+  },
+  {
+    title: 'Fusion Fuel Cycle',
+    subtitle: 'He²⁺ ash dynamics and tritium breeding',
+    description:
+      'Simulate alpha-particle ash accumulation and fuel dilution in a burning D–T plasma. Model the Tritium Breeding Ratio (TBR) for a lithium blanket as a function of Li-6 enrichment, thickness, and beryllium neutron multiplication.',
+    href: '/fusion/fusion-fuel-cycle/',
+    icon: '♻️',
+    tags: ['Alpha ash', 'TBR', 'Li-6 enrichment', 'Be multiplier'],
+    available: true,
+  },
 ];
 
 function ProjectCard({ project }: { project: Project }) {
@@ -63,9 +83,10 @@ export default function App() {
       <header className="hero">
         <div className="hero-inner">
           <p className="hero-eyebrow">jusjusjus / fusion</p>
-          <h1 className="hero-title">Physics Simulations</h1>
+          <h1 className="hero-title">Educational Simulations in Terrestrial Fusion Technology</h1>
           <p className="hero-subtitle">
-            Interactive explorations of electromagnetic fields and plasma confinement physics,
+            Interactive explorations of electromagnetic fields, plasma
+            confinement physics, and particle dynamics in fusion devices, all
             running entirely in the browser.
           </p>
         </div>

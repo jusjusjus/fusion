@@ -50,6 +50,8 @@ jobs:
             landing-page/package-lock.json
             magnetic-field-explorer/package-lock.json
             plasma-physics/package-lock.json
+            fusion-reactions/package-lock.json
+            fusion-fuel-cycle/package-lock.json
 
       - name: Install landing-page dependencies
         working-directory: landing-page
@@ -75,12 +77,30 @@ jobs:
         working-directory: plasma-physics
         run: npm run build
 
+      - name: Install fusion-reactions dependencies
+        working-directory: fusion-reactions
+        run: npm ci
+
+      - name: Build fusion-reactions
+        working-directory: fusion-reactions
+        run: npm run build
+
+      - name: Install fusion-fuel-cycle dependencies
+        working-directory: fusion-fuel-cycle
+        run: npm ci
+
+      - name: Build fusion-fuel-cycle
+        working-directory: fusion-fuel-cycle
+        run: npm run build
+
       - name: Merge build outputs
         run: |
           mkdir -p site
           cp -r landing-page/dist/. site/
           cp -r magnetic-field-explorer/dist/. site/
           cp -r plasma-physics/dist/. site/
+          cp -r fusion-reactions/dist/. site/
+          cp -r fusion-fuel-cycle/dist/. site/
 
       - uses: actions/configure-pages@v5
 
