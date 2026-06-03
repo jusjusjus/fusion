@@ -3,17 +3,17 @@
  *
  * 1D ideal MHD: a transverse magnetic perturbation b_y and velocity v_y
  * propagate at the Alfvén speed vA = B₀/√(μ₀ρ).
- * The canvas shows b_y(x, t) as a live waveform.
+ * The canvas shows b_y(x, t) and v_y(x, t) as live waveforms.
  */
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { initAlfvenFull, stepAlfvenFull } from '../physics/alfven';
 import type { AlfvenStateWithB0 } from '../physics/alfven';
+import NumericControl from '../components/NumericControl';
 
 const NG = 256;   // grid points
 const L  = 1.0;   // domain length (m)
 const STEPS_PER_FRAME = 20;
 
-/** Format Alfvén speed nicely */
 function fmtSpeed(v: number): string {
   if (v >= 1e6) return `${(v / 1e6).toFixed(2)} Mm/s`;
   if (v >= 1e3) return `${(v / 1e3).toFixed(1)} km/s`;
@@ -24,11 +24,13 @@ export default function AlfvenWave() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const stateRef  = useRef<AlfvenStateWithB0 | null>(null);
   const rafRef    = useRef<number>(0);
+  const runRef    = useRef(true);
 
-  const [B0,       setB0]       = useState(0.1);    // T
-  const [rho,      setRho]      = useState(1e-6);   // kg/m³
-  const [amplitude, setAmplitude] = useState(0.005); // T
-  const [width,    setWidth]    = useState(0.08);   // m
+  const [running,   setRunning]   = useState(true);
+  const [B0,        setB0]        = useState(0.1);    // T
+  const [rho,       setRho]       = useState(1e-6);   // kg/m³
+  const [amplitude, setAmplitude] = useState(0.005);  // T
+  const [width,     setWidth]     = useState(0.08);   // m
 
   const MU0 = 4 * Math.PI * 1e-7;
   const vA  = B0 / Math.sqrt(MU0 * rho);
@@ -36,6 +38,12 @@ export default function AlfvenWave() {
   const restart = useCallback(() => {
     stateRef.current = initAlfvenFull({ B0, rho, Ng: NG, L, amplitude, width });
   }, [B0, rho, amplitude, width]);
+
+  const toggleRunning = useCallback(() => {
+    const next = !runRef.current;
+    runRef.current = next;
+    setRunning(next);
+  }, []);
 
   useEffect(() => { restart(); }, [restart]);
 
@@ -59,13 +67,15 @@ export default function AlfvenWave() {
       if (!state) { rafRef.current = requestAnimationFrame(draw); return; }
 
       let s = state;
-      for (let i = 0; i < STEPS_PER_FRAME; i++) {
-        s = stepAlfvenFull(s);
+      if (runRef.current) {
+        for (let i = 0; i < STEPS_PER_FRAME; i++) {
+          s = stepAlfvenFull(s);
+        }
+        stateRef.current = s;
       }
-      stateRef.current = s;
 
       const ctx = canvas.getContext('2d');
-      if (!ctx) return;
+      if (!ctx) { rafRef.current = requestAnimationFrame(draw); return; }
       const W = canvas.width;
       const H = canvas.height;
 
@@ -76,11 +86,10 @@ export default function AlfvenWave() {
       const bMax = amplitude * 1.5 || 0.01;
 
       // ── b_y waveform ──────────────────────────────────────────────
-      const plotTop  = H * 0.1;
-      const plotH    = H * 0.35;
-      const midY     = plotTop + plotH * 0.5;
+      const plotTop = H * 0.1;
+      const plotH   = H * 0.35;
+      const midY    = plotTop + plotH * 0.5;
 
-      // Grid lines
       ctx.strokeStyle = 'rgba(255,255,255,0.05)';
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -91,17 +100,14 @@ export default function AlfvenWave() {
       }
       ctx.stroke();
 
-      // Zero line
       ctx.strokeStyle = 'rgba(255,200,60,0.25)';
       ctx.lineWidth = 1;
       ctx.setLineDash([6, 4]);
       ctx.beginPath();
-      ctx.moveTo(0, midY);
-      ctx.lineTo(W, midY);
+      ctx.moveTo(0, midY); ctx.lineTo(W, midY);
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // Waveform
       ctx.strokeStyle = '#4dabf7';
       ctx.lineWidth = 2;
       ctx.beginPath();
@@ -112,7 +118,6 @@ export default function AlfvenWave() {
       }
       ctx.stroke();
 
-      // b_y label
       ctx.fillStyle = 'rgba(100,140,200,0.7)';
       ctx.font = '11px monospace';
       ctx.fillText('b_y (T)', 6, plotTop + 12);
@@ -120,7 +125,7 @@ export default function AlfvenWave() {
       ctx.fillText('x →', W - 34, plotTop + plotH - 4);
 
       // ── v_y waveform ──────────────────────────────────────────────
-      const vy   = s.vy;
+      const vy    = s.vy;
       const vyMax = (amplitude / Math.sqrt(4 * Math.PI * 1e-7 * rho)) * 1.5 || 1;
 
       const plot2Top = H * 0.55;
@@ -180,46 +185,42 @@ export default function AlfvenWave() {
       <div className="sidebar">
         <p className="section-heading">Parameters</p>
         <div className="control-group">
-          <div className="control-row">
-            <label className="control-label">
-              B₀ (T)
-              <span className="control-value">{B0.toFixed(3)}</span>
-            </label>
-            <input type="range" min={0.001} max={1.0} step={0.001}
-              value={B0} onChange={(e) => setB0(Number(e.target.value))} />
-          </div>
-          <div className="control-row">
-            <label className="control-label">
-              Density ρ (kg/m³)
-              <span className="control-value">{rho.toExponential(1)}</span>
-            </label>
-            <input type="range" min={1e-8} max={1e-4} step={1e-8}
-              value={rho} onChange={(e) => setRho(Number(e.target.value))} />
-          </div>
-          <div className="control-row">
-            <label className="control-label">
-              Pulse amplitude (T)
-              <span className="control-value">{amplitude.toExponential(2)}</span>
-            </label>
-            <input type="range" min={1e-4} max={0.05} step={1e-4}
-              value={amplitude} onChange={(e) => setAmplitude(Number(e.target.value))} />
-          </div>
-          <div className="control-row">
-            <label className="control-label">
-              Pulse width (m)
-              <span className="control-value">{width.toFixed(3)}</span>
-            </label>
-            <input type="range" min={0.02} max={0.3} step={0.005}
-              value={width} onChange={(e) => setWidth(Number(e.target.value))} />
-          </div>
+          <NumericControl
+            label="B₀ (T)"
+            value={B0} min={0.001} max={1.0} step={0.001}
+            format={(v) => v.toFixed(3)}
+            onChange={setB0}
+          />
+          <NumericControl
+            label="Density ρ (kg/m³)"
+            value={rho} min={1e-8} max={1e-4} step={1e-8}
+            format={(v) => v.toExponential(2)}
+            onChange={setRho}
+          />
+          <NumericControl
+            label="Pulse amplitude (T)"
+            value={amplitude} min={1e-4} max={0.05} step={1e-4}
+            format={(v) => v.toExponential(2)}
+            onChange={setAmplitude}
+          />
+          <NumericControl
+            label="Pulse width (m)"
+            value={width} min={0.02} max={0.3} step={0.005}
+            format={(v) => v.toFixed(3)}
+            onChange={setWidth}
+          />
         </div>
 
-        <div className="info-badge">
-          vA = {fmtSpeed(vA)}
-        </div>
+        <div className="info-badge">vA = {fmtSpeed(vA)}</div>
 
         <div className="btn-row">
           <button className="btn btn--primary" onClick={restart}>Restart</button>
+          <button
+            className={`btn ${running ? 'btn--danger' : 'btn--primary'}`}
+            onClick={toggleRunning}
+          >
+            {running ? 'Pause' : 'Resume'}
+          </button>
         </div>
 
         <p className="description">

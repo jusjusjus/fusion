@@ -9,6 +9,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { initOscillation, stepOscillation, computeDensity } from '../physics/plasmaOscillations';
 import type { OscState } from '../physics/plasmaOscillations';
+import NumericControl from '../components/NumericControl';
 
 const NG     = 64;   // grid cells for density display
 const STEPS_PER_FRAME = 20;
@@ -32,10 +33,11 @@ export default function PlasmaOscillations() {
   const rafRef    = useRef<number>(0);
   const runRef    = useRef(true);
 
-  const [n0,       setN0]       = useState(1e16);   // m⁻³
-  const [amplitude, setAmplitude] = useState(0.3);  // fraction of spacing
-  const [N,        setN]        = useState(200);     // sheets
-  const [mode,     setMode]     = useState(1);       // spatial mode
+  const [running,   setRunning]   = useState(true);
+  const [n0,        setN0]        = useState(1e16);   // m⁻³
+  const [amplitude, setAmplitude] = useState(0.3);    // fraction of spacing
+  const [N,         setN]         = useState(200);    // sheets
+  const [mode,      setMode]      = useState(1);      // spatial mode
 
   const L = 0.1; // domain length (m) — 10 cm
 
@@ -47,6 +49,12 @@ export default function PlasmaOscillations() {
     stateRef.current = initOscillation({ n0, amplitude, N, L, mode });
   }, [n0, amplitude, N, mode]);
 
+  const toggleRunning = useCallback(() => {
+    const next = !runRef.current;
+    runRef.current = next;
+    setRunning(next);
+  }, []);
+
   // Re-initialise whenever parameters change
   useEffect(() => { restart(); }, [restart]);
 
@@ -55,19 +63,20 @@ export default function PlasmaOscillations() {
     if (!canvas) return;
 
     const draw = () => {
-      if (!runRef.current) return;
       const state = stateRef.current;
-      if (!state) return;
+      if (!state) { rafRef.current = requestAnimationFrame(draw); return; }
 
-      // Advance simulation
+      // Advance simulation only when running
       let s = state;
-      for (let i = 0; i < STEPS_PER_FRAME; i++) {
-        s = stepOscillation(s);
+      if (runRef.current) {
+        for (let i = 0; i < STEPS_PER_FRAME; i++) {
+          s = stepOscillation(s);
+        }
+        stateRef.current = s;
       }
-      stateRef.current = s;
 
       const ctx = canvas.getContext('2d');
-      if (!ctx) return;
+      if (!ctx) { rafRef.current = requestAnimationFrame(draw); return; }
 
       const W = canvas.width;
       const H = canvas.height;
@@ -113,7 +122,6 @@ export default function PlasmaOscillations() {
         const x = j * barW;
         const y = plotY + plotH - barH;
 
-        // Gradient fill
         const grad = ctx.createLinearGradient(0, y, 0, y + barH);
         grad.addColorStop(0, 'rgba(77,171,247,0.9)');
         grad.addColorStop(1, 'rgba(30,90,160,0.5)');
@@ -133,13 +141,12 @@ export default function PlasmaOscillations() {
       ctx.fillText('x →', W / 2 - 10, plotY + plotH + 14);
 
       // ωp readout
-      const wp_ = s.wp;
       ctx.fillStyle = 'rgba(105,219,124,0.9)';
       ctx.font = 'bold 13px monospace';
-      ctx.fillText(`ωp = ${(wp_ / 1e9).toFixed(3)} × 10⁹ rad/s`, 12, H * 0.92);
+      ctx.fillText(`ωp = ${(s.wp / 1e9).toFixed(3)} × 10⁹ rad/s`, 12, H * 0.92);
       ctx.fillStyle = 'rgba(105,219,124,0.7)';
       ctx.font = '11px monospace';
-      ctx.fillText(`fp = ${fmtFreq(wpToHz(wp_))}`, 12, H * 0.97);
+      ctx.fillText(`fp = ${fmtFreq(wpToHz(s.wp))}`, 12, H * 0.97);
 
       // t readout
       ctx.fillStyle = 'rgba(150,180,220,0.6)';
@@ -174,49 +181,43 @@ export default function PlasmaOscillations() {
       <div className="sidebar">
         <p className="section-heading">Parameters</p>
         <div className="control-group">
-          <div className="control-row">
-            <label className="control-label">
-              Density n₀ (m⁻³)
-              <span className="control-value">{n0.toExponential(1)}</span>
-            </label>
-            <input type="range" min={1e14} max={1e18} step={1e14}
-              value={n0} onChange={(e) => setN0(Number(e.target.value))} />
-          </div>
-          <div className="control-row">
-            <label className="control-label">
-              Amplitude
-              <span className="control-value">{amplitude.toFixed(2)}</span>
-            </label>
-            <input type="range" min={0.01} max={0.8} step={0.01}
-              value={amplitude} onChange={(e) => setAmplitude(Number(e.target.value))} />
-          </div>
-          <div className="control-row">
-            <label className="control-label">
-              Sheets N
-              <span className="control-value">{N}</span>
-            </label>
-            <input type="range" min={50} max={500} step={10}
-              value={N} onChange={(e) => setN(Number(e.target.value))} />
-          </div>
-          <div className="control-row">
-            <label className="control-label">
-              Mode k
-              <span className="control-value">{mode}</span>
-            </label>
-            <input type="range" min={1} max={8} step={1}
-              value={mode} onChange={(e) => setMode(Number(e.target.value))} />
-          </div>
+          <NumericControl
+            label="Density n₀ (m⁻³)"
+            value={n0} min={1e14} max={1e18} step={1e14}
+            format={(v) => v.toExponential(2)}
+            onChange={setN0}
+          />
+          <NumericControl
+            label="Amplitude"
+            value={amplitude} min={0.01} max={0.8} step={0.01}
+            format={(v) => v.toFixed(2)}
+            onChange={setAmplitude}
+          />
+          <NumericControl
+            label="Sheets N"
+            value={N} min={50} max={500} step={10}
+            format={String} integer
+            onChange={setN}
+          />
+          <NumericControl
+            label="Mode k"
+            value={mode} min={1} max={8} step={1}
+            format={String} integer
+            onChange={setMode}
+          />
         </div>
 
-        <div className="info-badge">
-          ωp = {(wp / 1e9).toFixed(3)} ×10⁹ rad/s
-        </div>
-        <div className="info-badge">
-          fp = {fmtFreq(fp)}
-        </div>
+        <div className="info-badge">ωp = {(wp / 1e9).toFixed(3)} ×10⁹ rad/s</div>
+        <div className="info-badge">fp = {fmtFreq(fp)}</div>
 
         <div className="btn-row">
           <button className="btn btn--primary" onClick={restart}>Restart</button>
+          <button
+            className={`btn ${running ? 'btn--danger' : 'btn--primary'}`}
+            onClick={toggleRunning}
+          >
+            {running ? 'Pause' : 'Resume'}
+          </button>
         </div>
 
         <p className="description">

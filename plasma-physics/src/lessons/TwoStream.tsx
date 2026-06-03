@@ -9,6 +9,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { initTwoStream, stepPIC, QM_ELECTRON } from '../physics/pic1d';
 import type { PICState } from '../physics/pic1d';
+import NumericControl from '../components/NumericControl';
 
 const L  = 1.0;    // domain length (m) — normalised
 const NG = 64;     // PIC grid cells
@@ -21,7 +22,9 @@ export default function TwoStream() {
   const stateRef     = useRef<PICState | null>(null);
   const energyLog    = useRef<number[]>([]);
   const rafRef       = useRef<number>(0);
+  const runRef       = useRef(true);
 
+  const [running, setRunning] = useState(true);
   const [v0,  setV0]  = useState(2e6);    // m/s (beam velocity)
   const [vth, setVth] = useState(1e5);    // m/s (thermal spread)
   const [Np,  setNp]  = useState(300);    // macro-particles per beam
@@ -31,6 +34,12 @@ export default function TwoStream() {
     stateRef.current = initTwoStream({ N: Np, v0, vth, L, Ng: NG, n0: N0 });
     energyLog.current = [];
   }, [v0, vth, Np]);
+
+  const toggleRunning = useCallback(() => {
+    const next = !runRef.current;
+    runRef.current = next;
+    setRunning(next);
+  }, []);
 
   useEffect(() => { restart(); }, [restart]);
 
@@ -54,16 +63,21 @@ export default function TwoStream() {
       const state = stateRef.current;
       if (!state) { rafRef.current = requestAnimationFrame(draw); return; }
 
+      // Only advance simulation (and log energy) when running
       let s = state;
-      for (let i = 0; i < STEPS_PER_FRAME; i++) {
-        s = stepPIC(s, dt, QM_ELECTRON, N0);
+      if (runRef.current) {
+        for (let i = 0; i < STEPS_PER_FRAME; i++) {
+          s = stepPIC(s, dt, QM_ELECTRON, N0);
+        }
+        stateRef.current = s;
+        energyLog.current.push(s.fieldEnergy);
+        if (energyLog.current.length > MAX_ENERGY_POINTS) energyLog.current.shift();
+      } else {
+        s = state;
       }
-      stateRef.current = s;
-      energyLog.current.push(s.fieldEnergy);
-      if (energyLog.current.length > MAX_ENERGY_POINTS) energyLog.current.shift();
 
       const ctx = canvas.getContext('2d');
-      if (!ctx) return;
+      if (!ctx) { rafRef.current = requestAnimationFrame(draw); return; }
       const W = canvas.width;
       const H = canvas.height;
 
@@ -75,19 +89,16 @@ export default function TwoStream() {
       const phaseY = H * 0.04;
       const vMax = v0 * 2.2;
 
-      // Border
       ctx.strokeStyle = 'rgba(77,171,247,0.2)';
       ctx.lineWidth = 1;
       ctx.strokeRect(0, phaseY, W, phaseH);
 
-      // Axes
       const vZeroY = phaseY + phaseH * 0.5;
       ctx.strokeStyle = 'rgba(255,255,255,0.08)';
       ctx.setLineDash([4, 4]);
       ctx.beginPath(); ctx.moveTo(0, vZeroY); ctx.lineTo(W, vZeroY); ctx.stroke();
       ctx.setLineDash([]);
 
-      // Particles
       const { x, v: vArr } = s;
       const N2 = x.length;
       for (let i = 0; i < N2; i++) {
@@ -98,7 +109,6 @@ export default function TwoStream() {
         ctx.fillRect(px - 0.8, py - 0.8, 1.6, 1.6);
       }
 
-      // Phase-space label
       ctx.fillStyle = 'rgba(100,140,200,0.7)';
       ctx.font = '10px monospace';
       ctx.fillText('vx', 4, phaseY + 12);
@@ -116,7 +126,7 @@ export default function TwoStream() {
       const elog = energyLog.current;
       if (elog.length > 1) {
         const maxE = Math.max(...elog.filter(isFinite)) || 1e-20;
-        const minE = Math.max(elog.filter(e => e > 0)[0] ?? maxE * 1e-6, maxE * 1e-8);
+        const minE = Math.max(elog.filter((e) => e > 0)[0] ?? maxE * 1e-6, maxE * 1e-8);
 
         ctx.strokeStyle = '#69db7c';
         ctx.lineWidth = 1.5;
@@ -152,42 +162,40 @@ export default function TwoStream() {
       <div className="sidebar">
         <p className="section-heading">Parameters</p>
         <div className="control-group">
-          <div className="control-row">
-            <label className="control-label">
-              Beam v₀ (m/s)
-              <span className="control-value">{v0.toExponential(1)}</span>
-            </label>
-            <input type="range" min={5e5} max={1e7} step={1e5}
-              value={v0} onChange={(e) => setV0(Number(e.target.value))} />
-          </div>
-          <div className="control-row">
-            <label className="control-label">
-              Thermal spread v_th (m/s)
-              <span className="control-value">{vth.toExponential(1)}</span>
-            </label>
-            <input type="range" min={0} max={5e5} step={1e4}
-              value={vth} onChange={(e) => setVth(Number(e.target.value))} />
-          </div>
-          <div className="control-row">
-            <label className="control-label">
-              Particles / beam
-              <span className="control-value">{Np}</span>
-            </label>
-            <input type="range" min={100} max={800} step={50}
-              value={Np} onChange={(e) => setNp(Number(e.target.value))} />
-          </div>
-          <div className="control-row">
-            <label className="control-label">
-              Time step (s)
-              <span className="control-value">{dt.toExponential(1)}</span>
-            </label>
-            <input type="range" min={1e-10} max={2e-9} step={1e-10}
-              value={dt} onChange={(e) => setDt(Number(e.target.value))} />
-          </div>
+          <NumericControl
+            label="Beam v₀ (m/s)"
+            value={v0} min={5e5} max={1e7} step={1e5}
+            format={(v) => v.toExponential(2)}
+            onChange={setV0}
+          />
+          <NumericControl
+            label="Thermal spread v_th (m/s)"
+            value={vth} min={0} max={5e5} step={1e4}
+            format={(v) => v.toExponential(2)}
+            onChange={setVth}
+          />
+          <NumericControl
+            label="Particles / beam"
+            value={Np} min={100} max={800} step={50}
+            format={String} integer
+            onChange={setNp}
+          />
+          <NumericControl
+            label="Time step (s)"
+            value={dt} min={1e-10} max={2e-9} step={1e-10}
+            format={(v) => v.toExponential(2)}
+            onChange={setDt}
+          />
         </div>
 
         <div className="btn-row">
           <button className="btn btn--primary" onClick={restart}>Restart</button>
+          <button
+            className={`btn ${running ? 'btn--danger' : 'btn--primary'}`}
+            onClick={toggleRunning}
+          >
+            {running ? 'Pause' : 'Resume'}
+          </button>
         </div>
 
         <p className="description">

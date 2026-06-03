@@ -1,51 +1,43 @@
 import { useState } from 'react';
+import LandingPage from './lessons/LandingPage';
 import PlasmaOscillations from './lessons/PlasmaOscillations';
 import TwoStream from './lessons/TwoStream';
 import AlfvenWave from './lessons/AlfvenWave';
 
-interface Lesson {
-  id: string;
-  icon: string;
-  title: string;
-  subtitle: string;
-}
-
-const LESSONS: Lesson[] = [
-  {
-    id: 'oscillations',
-    icon: '〜',
-    title: 'Plasma Oscillations',
-    subtitle: 'Electrons displaced from neutrality oscillate at ωp',
-  },
-  {
-    id: 'twostream',
-    icon: '⇅',
-    title: 'Two-Stream Instability',
-    subtitle: 'Counter-streaming beams drive exponential wave growth',
-  },
-  {
-    id: 'alfven',
-    icon: '🌊',
-    title: 'Alfvén Waves',
-    subtitle: 'Magnetic tension carries transverse waves at vA',
-  },
+const LESSONS = [
+  { id: 'oscillations', icon: '〜', title: 'Plasma Oscillations' },
+  { id: 'twostream',    icon: '⇅',  title: 'Two-Stream Instability' },
+  { id: 'alfven',       icon: '🌊', title: 'Alfvén Waves' },
 ];
 
 const COMPONENTS: Record<string, React.ComponentType> = {
   oscillations: PlasmaOscillations,
-  twostream: TwoStream,
-  alfven: AlfvenWave,
+  twostream:    TwoStream,
+  alfven:       AlfvenWave,
 };
 
 export default function App() {
-  const [active, setActive] = useState('oscillations');
-  const LessonComponent = COMPONENTS[active];
+  const [active, setActive] = useState<string | null>(null);
+  const activeLesson = active ? LESSONS.find((l) => l.id === active) : null;
+  const LessonComponent = active ? COMPONENTS[active] : null;
 
   return (
     <div className="app">
       <header className="app-header">
-        <div className="header-title">
+        <div className="header-breadcrumb">
           <a href="/fusion/" className="back-link">← Fusion</a>
+          {active && (
+            <>
+              <span className="breadcrumb-sep">/</span>
+              <button className="back-link back-link--btn" onClick={() => setActive(null)}>
+                Plasma Physics
+              </button>
+              <span className="breadcrumb-sep">/</span>
+              <span className="breadcrumb-current">{activeLesson?.title}</span>
+            </>
+          )}
+        </div>
+        <div className="header-title">
           <span className="header-icon">⚡</span>
           <div>
             <h1>Plasma Physics</h1>
@@ -54,21 +46,9 @@ export default function App() {
         </div>
       </header>
 
-      <nav className="lesson-nav">
-        {LESSONS.map(({ id, icon, title }) => (
-          <button
-            key={id}
-            className={`nav-tab${active === id ? ' nav-tab--active' : ''}`}
-            onClick={() => setActive(id)}
-          >
-            <span className="nav-tab-icon">{icon}</span>
-            <span className="nav-tab-label">{title}</span>
-          </button>
-        ))}
-      </nav>
-
       <main className="lesson-main">
-        {LessonComponent && <LessonComponent />}
+        {!active && <LandingPage onSelect={setActive} />}
+        {active && LessonComponent && <LessonComponent />}
       </main>
     </div>
   );
