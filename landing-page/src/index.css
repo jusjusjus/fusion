@@ -1,0 +1,226 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg:           #080d14;
+  --surface:      #0d1520;
+  --surface-hover:#111e2e;
+  --border:       rgba(80, 130, 200, 0.18);
+  --border-hover: rgba(80, 160, 255, 0.45);
+  --text:         #d4e4f7;
+  --text-muted:   rgba(160, 195, 235, 0.6);
+  --accent:       #4dabf7;
+  --accent-dim:   rgba(77, 171, 247, 0.15);
+  --tag-bg:       rgba(77, 171, 247, 0.1);
+  --tag-text:     #7ec8f9;
+  --soon-bg:      rgba(255, 180, 50, 0.12);
+  --soon-text:    #ffc94d;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── Layout ────────────────────────────────────────────────────────────── */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ── Hero ──────────────────────────────────────────────────────────────── */
+
+.hero {
+  padding: 4rem 1.5rem 3rem;
+  text-align: center;
+  background: radial-gradient(ellipse at 50% 0%, rgba(30, 80, 160, 0.2) 0%, transparent 70%);
+  border-bottom: 1px solid var(--border);
+}
+
+.hero-inner {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.hero-eyebrow {
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.hero-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #ffffff 30%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--text-muted);
+}
+
+/* ── Main ──────────────────────────────────────────────────────────────── */
+
+.main {
+  flex: 1;
+  padding: 3rem 1.5rem;
+  max-width: 860px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.projects-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+/* ── Project card ──────────────────────────────────────────────────────── */
+
+.project-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.18s, background 0.18s, transform 0.18s;
+}
+
+.project-card:hover {
+  border-color: var(--border-hover);
+  background: var(--surface-hover);
+  transform: translateY(-2px);
+}
+
+.project-card--soon {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.project-card--soon:hover {
+  transform: none;
+  border-color: var(--border);
+  background: var(--surface);
+}
+
+.card-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.25rem;
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.badge-soon {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--soon-bg);
+  color: var(--soon-text);
+  border: 1px solid rgba(255, 180, 50, 0.25);
+}
+
+.card-subtitle {
+  font-size: 0.85rem;
+  color: var(--accent);
+  margin-bottom: 0.6rem;
+}
+
+.card-desc {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-bottom: 0.85rem;
+}
+
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.tag {
+  font-size: 0.75rem;
+  padding: 2px 9px;
+  border-radius: 4px;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  border: 1px solid rgba(77, 171, 247, 0.18);
+}
+
+.card-arrow {
+  font-size: 1.4rem;
+  color: var(--accent);
+  align-self: center;
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.project-card:hover .card-arrow {
+  opacity: 1;
+  transform: translateX(3px);
+}
+
+/* ── Footer ────────────────────────────────────────────────────────────── */
+
+.footer {
+  text-align: center;
+  padding: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.footer-link {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.footer-link:hover {
+  color: var(--accent);
+}

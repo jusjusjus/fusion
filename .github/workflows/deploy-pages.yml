@@ -46,21 +46,37 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: magnetic-field-explorer/package-lock.json
+          cache-dependency-path: |
+            landing-page/package-lock.json
+            magnetic-field-explorer/package-lock.json
 
-      - name: Install dependencies
+      - name: Install landing-page dependencies
+        working-directory: landing-page
+        run: npm ci
+
+      - name: Build landing page
+        working-directory: landing-page
+        run: npm run build
+
+      - name: Install magnetic-field-explorer dependencies
         working-directory: magnetic-field-explorer
         run: npm ci
 
-      - name: Build
+      - name: Build magnetic-field-explorer
         working-directory: magnetic-field-explorer
         run: npm run build
+
+      - name: Merge build outputs
+        run: |
+          mkdir -p site
+          cp -r landing-page/dist/. site/
+          cp -r magnetic-field-explorer/dist/. site/
 
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: magnetic-field-explorer/dist
+          path: site
 
   deploy:
     needs: [check, build]
