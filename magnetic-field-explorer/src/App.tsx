@@ -21,17 +21,32 @@ const LESSONS: Record<string, ComponentType> = {
 
 export default function App() {
   const { t } = useTranslation();
-  const { activeLesson, tfBackend } = useStore();
+  const { activeLesson, setActiveLesson, tfBackend } = useStore();
   const LessonComponent = LESSONS[activeLesson];
 
   return (
     <div className="app">
       <header className="app-header">
-        <div className="header-title">
-          <span className="header-icon">🧲</span>
-          <div>
-            <h1>{t('appTitle')}</h1>
-            <p className="app-subtitle">{t('appSubtitle')}</p>
+        <div className="header-left">
+          <div className="header-breadcrumb">
+            <a href="/fusion/" className="back-link">← Fusion</a>
+            {activeLesson !== 'home' && (
+              <>
+                <span className="breadcrumb-sep">/</span>
+                <button className="back-link back-link--btn" onClick={() => setActiveLesson('home')}>
+                  {t('appTitle')}
+                </button>
+                <span className="breadcrumb-sep">/</span>
+                <span className="breadcrumb-current">{t(`lessons.${activeLesson}`)}</span>
+              </>
+            )}
+          </div>
+          <div className="header-title">
+            <span className="header-icon">🧲</span>
+            <div>
+              <h1>{t('appTitle')}</h1>
+              <p className="app-subtitle">{t('appSubtitle')}</p>
+            </div>
           </div>
         </div>
         <div className="header-right">
