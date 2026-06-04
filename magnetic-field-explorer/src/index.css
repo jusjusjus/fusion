@@ -655,3 +655,30 @@ input[type="range"] {
   .nav-label { display: none; }
   .nav-btn { padding: 0 10px; }
 }
+
+/* ── App footer ─────────────────────────────────────────────────────────── */
+
+.app-footer {
+  text-align: center;
+  padding: 0.75rem 1.5rem;
+  border-top: 1px solid rgba(80, 130, 200, 0.18);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.app-footer .footer-link {
+  font-size: 0.8rem;
+  color: rgba(160, 195, 235, 0.5);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.app-footer .footer-link:hover { color: #4dabf7; }
+
+.app-footer .footer-sep {
+  color: rgba(160, 195, 235, 0.4);
+  font-size: 0.8rem;
+}

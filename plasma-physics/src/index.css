@@ -273,3 +273,29 @@ input[type="range"] {
   padding: 4px 0;
 }
 .status-bar span { color: var(--accent); font-family: monospace; }
+
+/* ── App footer ─────────────────────────────────────────────────────────── */
+
+.app-footer {
+  text-align: center;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.app-footer .footer-link {
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.app-footer .footer-link:hover { color: var(--accent); }
+
+.app-footer .footer-sep {
+  color: var(--muted);
+  font-size: 0.82rem;
+}

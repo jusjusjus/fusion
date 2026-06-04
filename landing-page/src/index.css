@@ -224,3 +224,8 @@ body {
 .footer-link:hover {
   color: var(--accent);
 }
+
+.footer-sep {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}

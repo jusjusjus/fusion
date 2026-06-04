@@ -50,6 +50,12 @@ export default function App() {
         {!active && <LandingPage onSelect={setActive} />}
         {active && LessonComponent && <LessonComponent />}
       </main>
+
+      <footer className="app-footer">
+        <a href="/fusion/impressum.html" className="footer-link">Impressum</a>
+        <span className="footer-sep">·</span>
+        <a href="/fusion/datenschutz.html" className="footer-link">Datenschutz</a>
+      </footer>
     </div>
   );
 }
