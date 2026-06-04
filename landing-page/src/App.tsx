@@ -12,7 +12,7 @@ interface Project {
 const PROJECTS: Project[] = [
   {
     title: 'Magnetic Field Explorer',
-    subtitle: 'Interactive 3D simulation',
+    subtitle: 'Charged particles in magnetic field configurations',
     description:
       'Visualise Biot–Savart magnetic fields from circular coils, Helmholtz pairs, and tokamak geometries. Inject charged particles and trace their Larmor orbits in real time.',
     href: '/fusion/magnetic-explorer/',
