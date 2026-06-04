@@ -30,7 +30,7 @@ const PROJECTS: Project[] = [
     available: true,
   },
   {
-    title: 'Fusion Reactions',
+    title: 'Thermonuclear Reactions',
     subtitle: 'Nuclear physics of thermonuclear reactions',
     description:
       'Explore fusion cross-sections σ(E) for D–T, D–D, and D–³He using Bosch-Hale parameterisation. Visualise thermal reactivity ⟨σv⟩(T), the Lawson ignition criterion, and Q values with binding-energy bar charts.',

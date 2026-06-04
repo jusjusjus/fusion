@@ -45,7 +45,7 @@ export default function LandingPage({ onSelect }: LandingPageProps) {
   return (
     <div className="landing-page">
       <div className="landing-hero">
-        <p className="landing-eyebrow">Fusion Reactions</p>
+        <p className="landing-eyebrow">Thermonuclear Reactions</p>
         <h2 className="landing-title">Choose a topic</h2>
         <p className="landing-subtitle">
           Interactive visualisations of the nuclear physics behind thermonuclear fusion.

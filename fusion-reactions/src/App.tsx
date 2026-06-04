@@ -30,7 +30,7 @@ export default function App() {
             <>
               <span className="breadcrumb-sep">/</span>
               <button className="back-link back-link--btn" onClick={() => setActive(null)}>
-                Fusion Reactions
+                Thermonuclear Reactions
               </button>
               <span className="breadcrumb-sep">/</span>
               <span className="breadcrumb-current">{activeLesson?.title}</span>
@@ -40,7 +40,7 @@ export default function App() {
         <div className="header-title">
           <span className="header-icon">⚛️</span>
           <div>
-            <h1>Fusion Reactions</h1>
+            <h1>Thermonuclear Reactions</h1>
             <p className="app-subtitle">Nuclear physics of thermonuclear reactions</p>
           </div>
         </div>
