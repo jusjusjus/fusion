@@ -6,6 +6,7 @@ interface Project {
   icon: string;
   tags: string[];
   available: boolean;
+  wip?: boolean;
 }
 
 const PROJECTS: Project[] = [
@@ -28,6 +29,7 @@ const PROJECTS: Project[] = [
     icon: '⚡',
     tags: ['PIC', 'MHD', 'Plasma Oscillations', 'Alfvén Waves'],
     available: true,
+    wip: true,
   },
   {
     title: 'Thermonuclear Reactions',
@@ -38,6 +40,7 @@ const PROJECTS: Project[] = [
     icon: '⚛️',
     tags: ['Bosch-Hale', 'Cross-sections', 'Reactivity', 'Q value'],
     available: true,
+    wip: true,
   },
   {
     title: 'Fusion Fuel Cycle',
@@ -48,6 +51,7 @@ const PROJECTS: Project[] = [
     icon: '♻️',
     tags: ['Alpha ash', 'TBR', 'Li-6 enrichment', 'Be multiplier'],
     available: true,
+    wip: true,
   },
 ];
 
@@ -63,6 +67,7 @@ function ProjectCard({ project }: { project: Project }) {
         <div className="card-header">
           <h2 className="card-title">{project.title}</h2>
           {!project.available && <span className="badge-soon">Coming soon</span>}
+          {project.wip && <span className="badge-wip">🚧 Under construction</span>}
         </div>
         <p className="card-subtitle">{project.subtitle}</p>
         <p className="card-desc">{project.description}</p>
