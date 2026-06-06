@@ -1,0 +1,8 @@
+{
+  "name": "Proxima Fusion scaled W7-X stellarator",
+  "source": "https://github.com/proximafusion/open_stellarator_models",
+  "license": "MIT",
+  "version": "0.1.0",
+  "derivedFrom": "scaled_w7x_stellarator.step",
+  "notes": "Simplified CAD geometry; not a magnetic equilibrium model."
+}

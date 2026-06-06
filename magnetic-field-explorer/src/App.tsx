@@ -9,6 +9,7 @@ import HelmholtzCoils from './lessons/HelmholtzCoils';
 import ToroidalField from './lessons/ToroidalField';
 import TokamakField from './lessons/TokamakField';
 import GradientField from './lessons/GradientField';
+import StellaratorField from './lessons/StellaratorField';
 
 const LESSONS: Record<string, ComponentType> = {
   home: HomePage,
@@ -17,6 +18,7 @@ const LESSONS: Record<string, ComponentType> = {
   toroidal: ToroidalField,
   tokamak: TokamakField,
   gradient: GradientField,
+  stellarator: StellaratorField,
 };
 
 export default function App() {

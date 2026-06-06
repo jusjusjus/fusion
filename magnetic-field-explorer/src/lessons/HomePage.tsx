@@ -7,6 +7,7 @@ const LESSONS: Array<{ id: string; icon: string }> = [
   { id: 'toroidal',   icon: '🍩' },
   { id: 'tokamak',    icon: '⚛' },
   { id: 'gradient',   icon: '∇' },
+  { id: 'stellarator',   icon: '🌌' },
 ];
 
 interface NavModeKey {
