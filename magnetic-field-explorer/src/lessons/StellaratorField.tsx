@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as THREE from 'three';
 import Scene from '../viz/Scene';
-import StellaratorGeometry from '../viz/StellaratorGeometry';
+
 import CoilMesh from '../viz/CoilMesh';
 import CurrentArrows from '../viz/CurrentArrows';
 import FieldLines from '../viz/FieldLines';
@@ -16,8 +16,9 @@ import { fieldAtPoint } from '../physics/biotSavart';
 import { traceFieldlines, type BFunc } from '../physics/fieldlines';
 import { useParticleInjection } from '../hooks/useParticleInjection';
 
-const R0 = 14;
-const a = 4;
+const SCALE = 0.1;
+const R0 = 14 * SCALE;
+const a = 4 * SCALE;
 
 interface CoilData {
   merged: { midpoints: Float32Array; weightedDl: Float32Array };
@@ -36,7 +37,7 @@ export default function StellaratorField() {
   const cameraRef = useRef<THREE.Camera | null>(null);
 
   useEffect(() => {
-    loadStellaratorCoils().then((data) => {
+    loadStellaratorCoils(SCALE).then((data) => {
       const perCoilMidpoints: Float32Array[] = [];
       const perCoilWeightedDl: Float32Array[] = [];
       for (const coil of data.perCoil) {
@@ -79,36 +80,35 @@ export default function StellaratorField() {
 
   const controls = [
     { key: 'numLines',    label: t('controls.numFieldLines'), step: 1,     value: numLines,    hint: '0 – 12' },
-    { key: 'traceLength', label: t('controls.traceLength'),   step: 5,     value: traceLength, hint: 'm; torus circ ≈ 88 m' },
-    { key: 'current',     label: t('controls.current'),       step: 1e5,   value: current,     hint: 'A  (W7-X: ≈ 1.4 MA)' },
+    { key: 'traceLength', label: t('controls.traceLength'),   step: 0.5,   value: traceLength, hint: 'm; torus circ ≈ 8.8 m' },
+    { key: 'current',     label: t('controls.current'),       step: 1e5,   value: current,     hint: 'A  (model scaled ×0.1)' },
   ];
 
   return (
     <div className="lesson-layout">
       <div className="scene-area">
         <Scene
-          cameraPosition={[25, 15, 25]}
+          cameraPosition={[2.5, 1.5, 2.5]}
           controlsRef={controlsRef}
           cameraRef={cameraRef}
           injectionMode={injection.injectionMode}
           onInject={(cam) => injection.injectAt(cam)}
         >
-          <StellaratorGeometry />
           {coilData && coilData.perCoilMidpoints.map((mp, i) => (
             <group key={i}>
               <CoilMesh
                 midpoints={mp}
-                color={`hsl(${i * 7.2}, 80%, 60%)`}
+                color="#ff8800"
                 current={Math.abs(current)}
                 maxRadius={a * 0.05}
               />
               <CurrentArrows
                 midpoints={mp}
                 weightedDl={coilData.perCoilWeightedDl[i]}
-                color={`hsl(${i * 7.2}, 80%, 60%)`}
+                color="#ff8800"
                 nArrows={2}
-                coneRadius={0.05}
-                coneHeight={0.12}
+                coneRadius={0.008}
+                coneHeight={0.02}
               />
             </group>
           ))}

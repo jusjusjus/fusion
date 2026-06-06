@@ -32,7 +32,7 @@ export const DEFAULTS: AllParams = {
   gradient:   { B0: 0.001, alpha: 0.05, beta: 0, numLines: 4, traceLength: 0.5 },
   singleLoop: { radius: 0.10, current: 1.0, n: 200 },
   helmholtz:  { radius: 0.10, separation: 0.10, current: 1.0, n: 200 },
-  stellarator:   { numLines: 6, traceLength: 80, current: 1e6 },
+  stellarator:   { numLines: 6, traceLength: 10, current: 1e6 },
   toroidal:   { N: 12, R0: 1.00, a: 0.30, current: 50, n: 200, numLines: 5, traceLength: 8 },
   tokamak:    { N: 12, R0: 1.00, a: 0.30, current: 50, Icentral: 200, n: 200, numLines: 5, traceLength: 12 },
 };

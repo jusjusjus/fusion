@@ -51,7 +51,7 @@
       "toroidal": "N coils arranged around a torus create a toroidal field (B ∝ 1/R). Curvature and gradient drifts prevent confinement by a toroidal field alone — the motivation for adding a poloidal component.",
       "tokamak": "Toroidal coils plus a plasma current Iₚ generate a poloidal field that twists the field lines into helices. Adjust the ITER preset to explore reactor-scale geometry and keV particle orbits.",
       "gradient": "A model field Bz(x) = B₀ + α·x² + β·x⁴ along z. The transverse gradient drives injected particles to precess in y — illustrating gradient drift without solving the full Maxwell equations.",
-      "stellarator": "A W7-X stellarator model combined with a Bz(x) gradient field. See the 3D coil geometry and study how field gradients affect particle confinement in a realistic twisted torus."
+      "stellarator": "50 non-planar coils extracted from the W7-X CAD model, each discretized into 63 Biot–Savart segments. Field lines are traced through the vacuum magnetic field computed from the full coil set."
     },
     "nav": {
       "title": "How to navigate",
@@ -78,7 +78,7 @@
     "toroidal": "N coils arranged symmetrically around a torus produce a toroidal field with B ∝ 1/R (strongest at the inner edge). Curvature and gradient drifts cause particles to drift vertically and escape — the reason a pure toroidal field cannot confine a plasma, and the motivation for adding a poloidal component in a tokamak.",
     "tokamak": "A plasma current Iₚ flowing toroidally induces a poloidal field around the minor cross-section (Ampère: Bθ ≈ μ₀Iₚ/2πr). Combined with the toroidal coil field, this twists field lines into helices that close on themselves, providing confinement. The rotational transform ι = Bθ R₀/(Bφ r) sets how many poloidal turns a field line makes per toroidal circuit.",
     "gradient": "A model field Bz(x) = B₀ + α·x² + β·x⁴ pointing purely along z — even in x, so x = 0 is always a field extremum. Because Bx = By = 0 everywhere, ∇×B ≠ 0 and this is not a physical vacuum field. It is a pedagogical tool: the transverse ∇Bz drives gradient drift, causing injected particles to precess in the y-direction.",
-    "stellarator": "A 3D stellarator geometry (scaled W7-X) rendered alongside a model Bz(x) = B₀ + α·x² + β·x⁴ field. Explore how the twisted toroidal shape guides field lines and how injected particles drift in the presence of a transverse field gradient.",
+    "stellarator": "A scaled W7-X stellarator with 50 non-planar coils extracted from the CAD geometry. The magnetic field is computed via the Biot–Savart law over 3150 coil segments, producing a vacuum field with nested flux surfaces and rotational transform. Use field-line tracing and particle injection to explore confinement in a realistic 3D coil topology.",
     "helicalSheet": "A radial line of starting points is advected along field lines. The rotational transform ι(r) ∝ r causes outer lines to wind faster, shearing the initial straight line into a helical sheet."
   },
   "charts": {

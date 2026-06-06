@@ -66,10 +66,11 @@ const COIL_PATH = '/fusion/magnetic-explorer/models/stellarators/proxima-scaled-
 
 let cachedPromise: Promise<{ merged: Coil; perCoil: Coil[]; perCoilPoints: number[][][] }> | null = null;
 
-export function loadStellaratorCoils(): Promise<{ merged: Coil; perCoil: Coil[]; perCoilPoints: number[][][] }> {
-  if (cachedPromise) return cachedPromise;
+export function loadStellaratorCoils(scale = 0.1): Promise<{ merged: Coil; perCoil: Coil[]; perCoilPoints: number[][][] }> {
+  const cacheKey = `scale:${scale}` as string;
+  if (cachedPromise && (cachedPromise as any)._key === cacheKey) return cachedPromise;
 
-  cachedPromise = fetch(COIL_PATH)
+  const promise = fetch(COIL_PATH)
     .then((res) => {
       if (!res.ok) throw new Error(`Failed to load stellarator coils: ${res.status}`);
       return res.json() as Promise<StellaratorData>;
@@ -79,7 +80,7 @@ export function loadStellaratorCoils(): Promise<{ merged: Coil; perCoil: Coil[];
       const perCoilPoints: number[][][] = [];
 
       for (const pl of data.polylines) {
-        const pts = pl.points;
+        const pts = pl.points.map((p) => [p[0] * scale, p[1] * scale, p[2] * scale]);
         perCoilPoints.push(pts);
         perCoilCoils.push(polylineToCoil(pts, 1));
       }
@@ -90,5 +91,7 @@ export function loadStellaratorCoils(): Promise<{ merged: Coil; perCoil: Coil[];
       return { merged, perCoil: perCoilCoils, perCoilPoints };
     });
 
+  (promise as any)._key = cacheKey;
+  cachedPromise = promise;
   return cachedPromise;
 }

@@ -51,7 +51,7 @@
       "toroidal": "N Spulen um einen Torus erzeugen ein toroidales Feld (B ∝ 1/R). Krümmungs- und Gradientendrift verhindern den Einschluss durch ein reines Toroidalfeld — Motivation für die poloidale Komponente.",
       "tokamak": "Toroidalspulen und Plasmastrom Iₚ erzeugen ein poloidales Feld, das die Feldlinien zu Helices dreht. Mit dem ITER-Preset lassen sich reaktorskalige Geometrie und keV-Teilchenbahnen erkunden.",
       "gradient": "Ein Modellfeld Bz(x) = B₀ + α·x² + β·x⁴ entlang z. Der transversale Gradient treibt injizierte Teilchen in y — Gradientendrift, ohne die vollen Maxwell-Gleichungen zu lösen.",
-      "stellarator": "Ein W7-X-Stellarator-Modell kombiniert mit einem Bz(x)-Gradientenfeld. Siehe die 3D-Spulengeometrie und untersuche, wie Feldgradienten den Teilcheneinschluss in einem realistischen verdrehten Torus beeinflussen."
+      "stellarator": "50 nicht-planare Spulen aus dem W7-X-CAD-Modell extrahiert, jeweils in 63 Biot–Savart-Segmente diskretisiert. Feldlinien werden durch das Vakuum-Magnetfeld des vollständigen Spulensatzes verfolgt."
     },
     "nav": {
       "title": "Navigation",
@@ -78,7 +78,7 @@
     "toroidal": "N symmetrisch um einen Torus angeordnete Spulen erzeugen ein toroidales Feld mit B ∝ 1/R (stärker an der Innenseite). Krümmungs- und Gradientendrift lassen Teilchen vertikal driften und entweichen — weshalb ein reines Toroidalfeld kein Plasma einschließen kann und ein poloidales Feld benötigt wird.",
     "tokamak": "Ein toroidal fließender Plasmastrom Iₚ induziert ein poloidales Feld (Ampère: Bθ ≈ μ₀Iₚ/2πr). Zusammen mit dem Toroidalfeld entstehen helikale Feldlinien, die sich selbst schließen und Einschluss ermöglichen. Der Rotationstransform ι = Bθ R₀/(Bφ r) gibt an, wie viele poloidale Umläufe eine Feldlinie pro toroidalem Umlauf macht.",
     "gradient": "Ein Modellfeld Bz(x) = B₀ + α·x² + β·x⁴, das rein in z zeigt — gerade in x, sodass x = 0 immer ein Feldextremum ist. Da Bx = By = 0 überall gilt, ist ∇×B ≠ 0 — kein physikalisches Vakuumfeld. Es dient als Lehrwerkzeug: das transversale ∇Bz treibt Gradientendrift, sodass injizierte Teilchen in y-Richtung präzessieren.",
-    "stellarator": "Eine 3D-Stellarator-Geometrie (skalierter W7-X) zusammen mit einem Modellfeld Bz(x) = B₀ + α·x² + β·x⁴. Erkunde, wie die verdrehte torusartige Form Feldlinien führt und wie injizierte Teilchen im transversalen Feldgradienten driften.",
+    "stellarator": "Ein skalierter W7-X-Stellarator mit 50 nicht-planaren Spulen, extrahiert aus der CAD-Geometrie. Das Magnetfeld wird über das Biot–Savart-Gesetz mit 3150 Spulensegmenten berechnet und erzeugt ein Vakuumfeld mit geschachtelten Flussflächen und Rotationstransform. Nutze Feldlinienverfolgung und Teilcheninjektion, um den Einschluss in einer realistischen 3D-Spulentopologie zu erkunden.",
     "helicalSheet": "Eine radiale Linie von Startpunkten wird entlang der Feldlinien advektiert. Der Rotationstransform ι(r) ∝ r lässt äußere Linien schneller winden und verformt die gerade Linie in eine helikale Fläche."
   },
   "charts": {
