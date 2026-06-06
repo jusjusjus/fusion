@@ -3,6 +3,7 @@ import { create } from 'zustand';
 export interface GradientParams { B0: number; alpha: number; beta: number; numLines: number; traceLength: number; }
 export interface SingleLoopParams { radius: number; current: number; n: number; }
 export interface HelmholtzParams { radius: number; separation: number; current: number; n: number; }
+export interface StellaratorParams { numLines: number; traceLength: number; current: number; }
 export interface ToroidalParams { N: number; R0: number; a: number; current: number; n: number; numLines: number; traceLength: number; }
 export interface TokamakParams { N: number; R0: number; a: number; current: number; Icentral: number; n: number; numLines: number; traceLength: number; }
 
@@ -12,7 +13,7 @@ export interface AllParams {
   helmholtz: HelmholtzParams;
   toroidal: ToroidalParams;
   tokamak: TokamakParams;
-  stellarator: GradientParams;
+  stellarator: StellaratorParams;
 }
 export type LessonKey = keyof AllParams;
 
@@ -31,9 +32,9 @@ export const DEFAULTS: AllParams = {
   gradient:   { B0: 0.001, alpha: 0.05, beta: 0, numLines: 4, traceLength: 0.5 },
   singleLoop: { radius: 0.10, current: 1.0, n: 200 },
   helmholtz:  { radius: 0.10, separation: 0.10, current: 1.0, n: 200 },
+  stellarator:   { numLines: 6, traceLength: 80, current: 1e6 },
   toroidal:   { N: 12, R0: 1.00, a: 0.30, current: 50, n: 200, numLines: 5, traceLength: 8 },
   tokamak:    { N: 12, R0: 1.00, a: 0.30, current: 50, Icentral: 200, n: 200, numLines: 5, traceLength: 12 },
-  stellarator:   { B0: 0.001, alpha: 0.05, beta: 0, numLines: 4, traceLength: 0.5 },
 };
 export const ITER_TOROIDAL: ToroidalParams = { N: 18, R0: 6.2, a: 2.0, current: 500000, n: 200, numLines: 5, traceLength: 10 };
 export const ITER_TOKAMAK: TokamakParams = { ...ITER_TOROIDAL, Icentral: 2000000, traceLength: 12 };
